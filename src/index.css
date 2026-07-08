@@ -1,0 +1,142 @@
+/* ============================================
+   FHR App — Global Design System
+   Tailwind CSS v4 (CSS-first configuration)
+   Source: UI/UX Spec §1 (Color Palette, Typography)
+   ============================================ */
+
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* --------------------------------------------
+   Dark Mode: Class-based strategy (UI/UX §2.1)
+   Allows manual toggle via .dark on <html>
+   -------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* --------------------------------------------
+   Design Tokens (UI/UX §1.1 Color Palette)
+   -------------------------------------------- */
+@theme {
+  /* --- Primary --- */
+  --color-navy: #1A2B4C;
+  --color-navy-light: #243660;
+
+  /* --- Backgrounds (Light Mode) --- */
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F8FAFC;
+
+  /* --- Backgrounds (Dark Mode) — referenced via dark: variant --- */
+  --color-midnight: #0F172A;
+  --color-midnight-light: #1E293B;
+
+  /* --- Typography Colors --- */
+  --color-text-heading: #1A2B4C;
+  --color-text-body: #334155;
+  --color-text-heading-dark: #F1F5F9;
+  --color-text-body-dark: #CBD5E1;
+  --color-text-muted: #94A3B8;
+
+  /* --- Accents --- */
+  --color-gold: #D4AF37;
+  --color-gold-light: #FEF08A;
+  --color-gold-dark: #B45309;
+  --color-action-red: #DC2626;
+
+  /* --- Font Families --- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Merriweather", ui-serif, Georgia, serif;
+}
+
+/* --------------------------------------------
+   Base Styles
+   -------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text-body);
+  background-color: var(--color-surface);
+
+  /* Smooth theme switching (UI/UX §2.1) */
+  transition-property: color, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Dark mode base overrides */
+.dark body,
+body:where(.dark *) {
+  color: var(--color-text-body-dark);
+  background-color: var(--color-midnight);
+}
+
+/* --------------------------------------------
+   Heading Defaults
+   -------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-heading);
+  font-family: var(--font-sans);
+  transition-property: color;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
+
+.dark h1, .dark h2, .dark h3,
+.dark h4, .dark h5, .dark h6 {
+  color: var(--color-text-heading-dark);
+}
+
+/* --------------------------------------------
+   Reader Typography Overrides (UI/UX §1.2)
+   Applied when user selects Serif mode
+   -------------------------------------------- */
+.reader-serif {
+  font-family: var(--font-serif);
+}
+
+.reader-sans {
+  font-family: var(--font-sans);
+}
+
+/* --------------------------------------------
+   Search Highlight (UI/UX §3.3)
+   Judicial Gold <mark> styling
+   -------------------------------------------- */
+mark.search-highlight {
+  background-color: var(--color-gold-light);
+  color: #000000;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+.dark mark.search-highlight {
+  background-color: var(--color-gold-dark);
+  color: #FFFFFF;
+}
+
+/* --------------------------------------------
+   Scrollbar Styling (subtle, professional)
+   -------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-text-muted);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: var(--color-midnight-light);
+}

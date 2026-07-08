@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Deep Navy Background -->
+  <rect width="512" height="512" rx="112" fill="#1A2B4C" />
+  
+  <!-- Judicial Gold Scales of Justice -->
+  <!-- Center Pillar -->
+  <path d="M256 80v336" stroke="#D4AF37" stroke-width="32" stroke-linecap="round" />
+  
+  <!-- Top Beam -->
+  <path d="M100 144h312" stroke="#D4AF37" stroke-width="32" stroke-linecap="round" />
+  
+  <!-- Left Scale Pan -->
+  <path d="M100 144l-64 160a64 64 0 0 0 128 0l-64-160z" fill="#D4AF37" stroke="#D4AF37" stroke-width="16" stroke-linejoin="round" />
+  
+  <!-- Right Scale Pan -->
+  <path d="M412 144l-64 160a64 64 0 0 0 128 0l-64-160z" fill="#D4AF37" stroke="#D4AF37" stroke-width="16" stroke-linejoin="round" />
+  
+  <!-- Base/Stand -->
+  <path d="M192 448h128" stroke="#D4AF37" stroke-width="32" stroke-linecap="round" />
+</svg>

@@ -109,13 +109,13 @@ All future components must match these established patterns for consistency.
 
 ## InstallModal
 - **File**: `src/components/pwa/InstallModal.tsx`
-- **Date**: 2026-07-04
-- **Background**: Modal overlay `bg-navy/60 backdrop-blur-sm`, Dialog `bg-surface dark:bg-midnight`
-- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Body `text-text-body dark:text-text-body-dark`
-- **Primary Button**: `bg-gold text-navy hover:bg-gold-light focus:ring-navy`
-- **Secondary Button**: `bg-white dark:bg-midnight-light text-text-body dark:text-text-body-dark border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus:ring-navy`
-- **Spacing**: `fixed inset-0 p-4`, Dialog `p-6 max-w-sm`, Gap `gap-3`
-- **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`
+- **Date**: 2026-07-10 (UX update)
+- **Background**: Modal overlay `bg-navy/60 backdrop-blur-sm`, Dialog `bg-surface dark:bg-midnight`, iOS Fallback Card `bg-slate-50 dark:bg-slate-800`
+- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Body `text-text-body dark:text-text-body-dark`, Dismiss/Agency `text-text-muted`, Agency Link `text-gold hover:text-gold-light`
+- **Primary Button**: `bg-gold text-navy hover:bg-gold-light focus:ring-navy` (Non-iOS only)
+- **Dismiss Link**: `text-sm hover:underline bg-transparent border-none outline-none` (Replaces Secondary Button)
+- **Spacing**: `fixed inset-0 p-4`, Dialog `p-6 max-w-sm`, Gap `gap-3`, iOS Fallback Card `p-4`
+- **Borders/Shadows**: Dialog `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`, iOS Fallback Card `border border-slate-200 dark:border-slate-700 rounded-lg`
 
 ---
 

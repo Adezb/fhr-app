@@ -1,7 +1,16 @@
+import { useState, useEffect } from 'react';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
 
 export default function InstallModal() {
   const { showPrompt, handleInstall, handleDismiss } = usePWAInstall();
+  const [isIOS, setIsIOS] = useState(false);
+
+  useEffect(() => {
+    // Check for iOS Safari
+    const checkIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                     (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+    setIsIOS(checkIOS);
+  }, []);
 
   if (!showPrompt) return null;
 
@@ -16,28 +25,41 @@ export default function InstallModal() {
             </svg>
           </div>
           <h3 className="text-xl font-serif font-bold text-navy dark:text-text-heading-dark mb-2">
-            Install Offline Guide
+            Install FHR Offline Guide
           </h3>
           <p className="text-sm text-text-body dark:text-text-body-dark mb-6 leading-relaxed">
-            Install the Fundamental Rights Guide to your device for instant, offline courtroom access. No internet required after installation.
+            Install this guide to your device for instant, offline access. Read up on your fundamental rights anywhere, anytime—no internet connection required.
           </p>
         </div>
         
         <div className="flex flex-col gap-3">
-          <button
-            onClick={handleInstall}
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-navy bg-gold hover:bg-gold-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-colors"
-          >
-            Install Now
-          </button>
+          {isIOS ? (
+            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
+              <p className="text-sm text-text-body dark:text-text-body-dark leading-relaxed">
+                To install on iOS: Tap the Share icon at the bottom of your screen and select <strong>"Add to Home Screen"</strong>.
+              </p>
+            </div>
+          ) : (
+            <button
+              onClick={handleInstall}
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-navy bg-gold hover:bg-gold-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-colors"
+            >
+              Install Now
+            </button>
+          )}
+          
           <button
             onClick={handleDismiss}
-            className="w-full flex justify-center py-2.5 px-4 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm text-sm font-medium text-text-body dark:text-text-body-dark bg-white dark:bg-midnight-light hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-colors"
+            className="text-sm text-text-muted hover:underline mt-4 cursor-pointer w-full text-center bg-transparent border-none outline-none"
           >
-            Not Now
+            Continue reading in browser
           </button>
         </div>
         
+        <div className="text-xs text-text-muted mt-6 text-center">
+          Powered by <a href="https://cektopventures.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold-light transition-colors">CEK TOP VENTURES LTD</a>
+        </div>
+
       </div>
     </div>
   );

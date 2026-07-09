@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
@@ -19,6 +19,7 @@ export default function ChapterPage() {
   const [prevChapter, setPrevChapter] = useState<Chapter | null>(null);
   const [nextChapter, setNextChapter] = useState<Chapter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isRestoringScroll = useRef(false);
 
   useEffect(() => {
     async function loadChapter() {
@@ -56,7 +57,40 @@ export default function ChapterPage() {
         
         // Auto scroll to top when chapter changes, unless we are highlighting a search result
         if (!searchParams.get('q')) {
-          window.scrollTo({ top: 0, behavior: 'instant' });
+          const savedProgressStr = localStorage.getItem('fhr_reading_progress');
+          let shouldRestore = false;
+          
+          if (savedProgressStr) {
+            try {
+              const parsed = JSON.parse(savedProgressStr);
+              if (parsed.chapterSlug === slug && parsed.scrollPercentage > 0) {
+                shouldRestore = true;
+                isRestoringScroll.current = true;
+                
+                // Wait for React to paint the dangerouslySetInnerHTML
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    const docHeight = document.documentElement.scrollHeight;
+                    const windowHeight = window.innerHeight;
+                    const targetY = (parsed.scrollPercentage / 100) * (docHeight - windowHeight);
+                    
+                    window.scrollTo({ top: targetY, behavior: 'instant' });
+                    
+                    // Release lock after a brief delay to let scroll events settle
+                    setTimeout(() => {
+                      isRestoringScroll.current = false;
+                    }, 100);
+                  });
+                });
+              }
+            } catch (e) {
+              // ignore parse errors
+            }
+          }
+          
+          if (!shouldRestore) {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }
         }
       } catch (error) {
         console.error("Failed to load chapter:", error);
@@ -75,6 +109,8 @@ export default function ChapterPage() {
     let timeoutId: number;
 
     const handleScroll = () => {
+      if (isRestoringScroll.current) return;
+
       if (timeoutId) {
         window.clearTimeout(timeoutId);
       }

@@ -42,6 +42,7 @@ Four distinct font families are supported:
     2.  Global CSS `transition-colors` are avoided on `body` and typography elements to prevent initial fade-ins.
     3.  Instead, main layout wrappers (`AppShell`, `ReaderView`) use an `isMounted` delayed-state pattern in React to append `transition-colors duration-300 ease-in-out` *after* the initial paint. This ensures load is instant while manual toggles remain beautifully smooth.
 *   **Bug Fix Record - Theme Hook Storage Disconnect:** The `useTheme` hook's storage key MUST strictly match the key used in the `index.html` blocking script (`fhr_theme`). Additionally, the hook must NOT perform destructive DOM clears (`root.classList.remove('light', 'dark')`) upon initial hydration, as this creates a race condition that triggers the transition flash. The hook is now optimized to safely add/remove `.dark` to respect the blocking script's pre-rendered state.
+*   **Bug Fix Record - Continue Reading Scroll Restoration:** The `useReadingProgress` hook must initialize synchronously from `localStorage`. When restoring the user's scroll position, an `isRestoringScroll` lock must be implemented to prevent passive scroll listeners from immediately overwriting the saved progress with `0%` during the layout calculation phase. Restoration requires a double `requestAnimationFrame` to delay pixel calculation until dynamically injected HTML (`dangerouslySetInnerHTML`) is fully painted by the browser.
 
 ### 2.2 Responsiveness
 *   **Mobile-First Strategy:** Default layouts must target mobile viewports.

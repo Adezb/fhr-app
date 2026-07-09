@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface ReadingProgress {
   chapterSlug: string;
@@ -11,18 +11,15 @@ export interface ReadingProgress {
 const STORAGE_KEY = 'fhr_reading_progress';
 
 export function useReadingProgress() {
-  const [progress, setProgress] = useState<ReadingProgress | null>(null);
-
-  useEffect(() => {
+  const [progress, setProgress] = useState<ReadingProgress | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setProgress(JSON.parse(stored));
-      }
+      return stored ? JSON.parse(stored) : null;
     } catch (e) {
-      console.error('Failed to parse reading progress:', e);
+      console.error('Failed to parse initial reading progress:', e);
+      return null;
     }
-  }, []);
+  });
 
   const saveProgress = (data: Omit<ReadingProgress, 'lastReadAt'>) => {
     try {

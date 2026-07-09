@@ -76,7 +76,7 @@ export default function HomePage() {
               <span>📖</span> {progress ? 'CONTINUE READING' : 'START READING'}
             </div>
             
-            <h2 className="text-lg font-serif font-bold text-white mt-4 group-hover:text-gold-light transition-colors">
+            <h2 className="text-lg font-serif font-bold !text-white mt-4 group-hover:!text-gold-light transition-colors">
               {progress ? progress.bookTitle : 'Fundamental Rights Enforcement'}
             </h2>
             <p className="text-sm text-slate-300 mt-1">

@@ -50,6 +50,12 @@ Four distinct font families are supported:
     *   On Tablet (`md:`), expand cards to grids (e.g., Authorities list breaks into 2 columns).
     *   On Desktop (`lg:`), cap the maximum width of the Reader Interface to `max-w-3xl` and center it (`mx-auto`). Reading lines should never stretch across a full 1080p monitor.
 
+### 2.3 Scroll Behavior & Restoration
+*   **Continue Reading (Scroll Restoration):** The `useReadingProgress` hook must initialize synchronously from `localStorage`. When restoring the user's scroll position, an `isRestoringScroll` lock must be implemented to prevent passive scroll listeners from immediately overwriting the saved progress with `0%` during the layout calculation phase. Restoration requires a double `requestAnimationFrame` to delay pixel calculation until dynamically injected HTML (`dangerouslySetInnerHTML`) is fully painted by the browser.
+
+### 2.4 Contrast & Specificity
+*   **Bug Fix Record - Specificity Conflicts in Light Mode:** Elements with dark backgrounds (e.g., `bg-navy`) must use `!text-white` or `!text-slate-50` when placed within globally defined headings (e.g., `h2`) to override `index.css` element selectors that default to dark text (`var(--color-text-heading)`) in Light Mode.
+
 ## 3. Component-Specific Specifications
 
 ### 3.1 Custom PWA Install Modal

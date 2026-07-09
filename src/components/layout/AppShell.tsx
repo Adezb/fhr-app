@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import TopNavbar from './TopNavbar';
 import BottomNav from './BottomNav';
@@ -7,6 +8,11 @@ import InstallModal from '../pwa/InstallModal';
 import SearchOverlay from '../search/SearchOverlay';
 
 export default function AppShell() {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Initialize background sync (auto-runs on launch & network reconnect)
   const { error: syncError } = useSync();
 
@@ -22,7 +28,7 @@ export default function AppShell() {
   } = useSearch();
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-surface dark:bg-midnight text-text-body dark:text-text-body-dark transition-colors duration-300 flex flex-col">
+    <div className={`min-h-screen overflow-x-hidden bg-surface dark:bg-midnight text-text-body dark:text-text-body-dark flex flex-col ${isMounted ? 'transition-colors duration-300 ease-in-out' : ''}`}>
       <TopNavbar onSearchClick={openSearch} />
 
       {/* Sync Error Banner */}

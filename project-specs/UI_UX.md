@@ -37,7 +37,11 @@ Four distinct font families are supported:
 ### 2.1 Theming (Light/Dark Mode)
 *   **Strategy:** Use Tailwind's `class` strategy for dark mode. 
 *   **Trigger:** Sync with OS system preferences by default, but provide a manual override toggle (Sun/Moon icon) in the Reader and Settings UI.
-*   **Transitions:** Apply `transition-colors duration-300 ease-in-out` to body and main containers to ensure smooth theme switching without flashing.
+*   **Theme Initialization Pattern (Anti-Flash):** To prevent a "Flash of Unstyled Content" (FOUC) on page reload:
+    1.  A synchronous, inline `<script>` runs in `index.html` `<head>` to read `localStorage`/`matchMedia` and apply the `.dark` class to `<html>` *before* React mounts.
+    2.  Global CSS `transition-colors` are avoided on `body` and typography elements to prevent initial fade-ins.
+    3.  Instead, main layout wrappers (`AppShell`, `ReaderView`) use an `isMounted` delayed-state pattern in React to append `transition-colors duration-300 ease-in-out` *after* the initial paint. This ensures load is instant while manual toggles remain beautifully smooth.
+*   **Bug Fix Record - Theme Hook Storage Disconnect:** The `useTheme` hook's storage key MUST strictly match the key used in the `index.html` blocking script (`fhr_theme`). Additionally, the hook must NOT perform destructive DOM clears (`root.classList.remove('light', 'dark')`) upon initial hydration, as this creates a race condition that triggers the transition flash. The hook is now optimized to safely add/remove `.dark` to respect the blocking script's pre-rendered state.
 
 ### 2.2 Responsiveness
 *   **Mobile-First Strategy:** Default layouts must target mobile viewports.

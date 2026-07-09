@@ -23,6 +23,21 @@
 
     <!-- PWA: Theme color matching Deep Navy -->
     <meta name="theme-color" content="#1A2B4C" />
+
+    <!-- Theme Initialization Script (Prevents FOUC / Theme Flash) -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('fhr_theme');
+          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (theme === '"dark"' || theme === 'dark' || (!theme && systemDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

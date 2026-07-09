@@ -4,21 +4,26 @@ type Theme = 'light' | 'dark' | 'system';
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('theme') as Theme) || 'system';
+    // 1. Unify storage key to match index.html blocking script
+    return (localStorage.getItem('fhr_theme') as Theme) || 'system';
   });
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
+    
+    // Determine the actual intended mode
+    const isDark = 
+      theme === 'dark' || 
+      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      root.classList.add(systemTheme);
+    // 2. Refactor initialization: Safely add/remove without destructive clearing
+    if (isDark) {
+      root.classList.add('dark');
     } else {
-      root.classList.add(theme);
+      root.classList.remove('dark');
     }
 
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('fhr_theme', theme);
   }, [theme]);
 
   // Handle system theme changes dynamically if set to 'system'
@@ -27,8 +32,11 @@ export function useTheme() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      root.classList.add(e.matches ? 'dark' : 'light');
+      if (e.matches) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
     };
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);

@@ -61,11 +61,6 @@ body {
   color: var(--color-text-body);
   background-color: var(--color-surface);
 
-  /* Smooth theme switching (UI/UX §2.1) */
-  transition-property: color, background-color;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -83,9 +78,6 @@ body:where(.dark *) {
    -------------------------------------------- */
 h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-heading);
-  transition-property: color;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
 }
 
 .dark h1, .dark h2, .dark h3,

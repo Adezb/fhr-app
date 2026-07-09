@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ReaderViewProps {
   title: string;
@@ -10,6 +10,11 @@ interface ReaderViewProps {
 export default function ReaderView({ title, contentHtml, searchQuery, searchKey }: ReaderViewProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!searchQuery || !contentRef.current) return;
@@ -91,7 +96,7 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
   return (
     <article className="mx-auto w-full max-w-3xl px-4 sm:px-6 py-6 pb-24">
       <header className="mb-8 border-b border-slate-200 dark:border-slate-800 pb-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy dark:text-text-heading-dark leading-tight break-words">
+        <h1 className={`text-2xl sm:text-3xl md:text-4xl font-bold text-navy dark:text-text-heading-dark leading-tight break-words ${isMounted ? 'transition-colors duration-300 ease-in-out' : ''}`}>
           {title}
         </h1>
       </header>
@@ -102,7 +107,7 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
       */}
       <div 
         ref={contentRef}
-        className="prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-headings:break-words prose-a:text-gold dark:prose-a:text-gold-light hover:prose-a:text-gold-dark prose-blockquote:border-l-gold"
+        className={`prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-headings:break-words prose-a:text-gold dark:prose-a:text-gold-light hover:prose-a:text-gold-dark prose-blockquote:border-l-gold ${isMounted ? '[&_*]:transition-colors [&_*]:duration-300 [&_*]:ease-in-out transition-colors duration-300 ease-in-out' : ''}`}
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
     </article>

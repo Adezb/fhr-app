@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 
-export type ReaderFont = 'serif' | 'sans';
+export type ReaderFont = 'sans' | 'serif' | 'mono' | 'accessible';
 
 export function useFont() {
   const [font, setFont] = useState<ReaderFont>(() => {
-    // Default to 'serif' as per UI/UX specs for the reader interface
-    return (localStorage.getItem('reader-font') as ReaderFont) || 'serif';
+    // Default to 'sans' as a sensible baseline now that we apply globally
+    return (localStorage.getItem('app-font') as ReaderFont) || 'sans';
   });
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('reader-serif', 'reader-sans');
-    root.classList.add(`reader-${font}`);
-    localStorage.setItem('reader-font', font);
+    root.classList.remove('font-serif', 'font-sans', 'font-mono', 'font-accessible');
+    root.classList.add(`font-${font}`);
+    localStorage.setItem('app-font', font);
   }, [font]);
 
   return { font, setFont };

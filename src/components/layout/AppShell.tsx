@@ -22,7 +22,7 @@ export default function AppShell() {
   } = useSearch();
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-surface dark:bg-midnight text-text-body dark:text-text-body-dark transition-colors duration-300 flex flex-col font-sans">
+    <div className="min-h-screen overflow-x-hidden bg-surface dark:bg-midnight text-text-body dark:text-text-body-dark transition-colors duration-300 flex flex-col">
       <TopNavbar onSearchClick={openSearch} />
 
       {/* Sync Error Banner */}

@@ -21,13 +21,16 @@ The app relies on a professional, judicial color scheme. All Tailwind classes sh
     *   Notifications/New Authority (Action Red): `#DC2626` (Tailwind `red-600`).
 
 ### 1.2 Typography
-Implement two distinct font families using Google Fonts:
+### 1.2 Typography (Global Theming)
+The application implements a global font-switching system. The user's selected font applies globally across the entire application (both UI and Reader Interface) via a standard Tailwind utility class (`font-sans`, `font-serif`, etc.) applied to the `<html>` root.
 
-*   **UI & Dashboard (Sans-Serif):** `Inter` or `Roboto`.
-    *   *Usage:* Buttons, Navigation, Dashboard Cards, Search bars.
-*   **Reader Interface (Serif):** `Merriweather` or `Lora`.
-    *   *Usage:* Exclusively for the core book content and authority summaries.
-    *   *Implementation:* Use `@tailwindcss/typography` (`prose` class) to automatically handle line-height (1.6+ for readability), paragraph margins, and hierarchical headers natively.
+Four distinct font families are supported:
+1.  **Sans-Serif (Default):** `Inter` or `Roboto`. Modern, clean, optimal for dense UI.
+2.  **Serif:** `Merriweather` or `Lora`. Traditional, formal, optimal for long-form legal reading.
+3.  **Monospace:** `JetBrains Mono` or system mono. Provides strict vertical alignment.
+4.  **Accessible (Legible):** `Atkinson Hyperlegible`. Specifically designed to differentiate similarly shaped characters (like 'l' and '1') for visually impaired users.
+
+*Implementation Note:* The `@tailwindcss/typography` (`prose` class) natively inherits the font family from this global root constraint. No hardcoded font classes (like `font-sans`) should be placed on structural wrappers (e.g., `AppShell`) as this will break the global inheritance cascade.
 
 ## 2. Global UI/UX Rules
 

@@ -52,12 +52,23 @@ All future components must match these established patterns for consistency.
 
 ---
 
-## ThemeToggle & FontToggle
-- **File**: `src/components/reader/ThemeToggle.tsx`, `src/components/reader/FontToggle.tsx`
+## ThemeToggle
+- **File**: `src/components/reader/ThemeToggle.tsx`
 - **Date**: 2026-07-04
 - **Text Colors**: `text-white`, `hover:text-gold-light`
 - **Spacing**: `p-2`
 - **Interactive**: `hover:text-gold-light`, `transition-colors`, `focus:outline-none`, `focus:ring-2`, `focus:ring-gold-light`
+
+---
+
+## FontToggle (Multi-Font Dropdown)
+- **File**: `src/components/reader/FontToggle.tsx`
+- **Date**: 2026-07-08 (Dropdown Upgrade)
+- **Trigger Button**: `p-2 text-white hover:text-gold-light`, contains accessible `aria-haspopup` attributes.
+- **Dropdown Menu**: `absolute right-0 mt-2 w-48 z-50` — right-aligned to prevent mobile overflow.
+- **Dropdown Styling**: `bg-white dark:bg-midnight border border-slate-200 dark:border-slate-800 rounded-md shadow-xl overflow-hidden`.
+- **Menu Items**: `w-full text-left px-4 py-3`, active state `bg-navy/5 dark:bg-gold/10 text-navy dark:text-gold-light font-bold`.
+- **UX**: Implements a native React click-outside listener to close the dropdown when tapping elsewhere.
 - **Border Radius**: `rounded-md`
 
 ---

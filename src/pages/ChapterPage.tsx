@@ -4,6 +4,7 @@ import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
 import ReaderView from '../components/reader/ReaderView';
 import ReaderBottomNav from '../components/reader/ReaderBottomNav';
+import { useReadingProgress } from '../hooks/useReadingProgress';
 
 export default function ChapterPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -11,6 +12,8 @@ export default function ChapterPage() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const highlightQuery = searchParams.get('q') || undefined;
+  
+  const { saveProgress } = useReadingProgress();
   
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [prevChapter, setPrevChapter] = useState<Chapter | null>(null);
@@ -64,6 +67,53 @@ export default function ChapterPage() {
     
     loadChapter();
   }, [slug, navigate]);
+
+  // Track reading progress
+  useEffect(() => {
+    if (!chapter || !slug) return;
+
+    let timeoutId: number;
+
+    const handleScroll = () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+      
+      timeoutId = window.setTimeout(() => {
+        const scrollPosition = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+        
+        const totalScrollableDistance = docHeight - windowHeight;
+        let percentage = 0;
+        
+        if (totalScrollableDistance > 0) {
+          percentage = (scrollPosition / totalScrollableDistance) * 100;
+          percentage = Math.min(100, Math.max(0, percentage));
+        } else {
+          percentage = 100;
+        }
+        
+        saveProgress({
+          chapterSlug: slug,
+          chapterTitle: chapter.title,
+          bookTitle: 'Fundamental Rights Enforcement',
+          scrollPercentage: percentage,
+        });
+      }, 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial save on mount
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [chapter, slug]);
 
   if (isLoading) {
     return (

@@ -137,3 +137,23 @@ The `TopNavbar` is context-aware on mobile and changes its left-side content bas
 **Root Cause:** The transparent-on-home behaviour was an over-interpretation of the design intent. Since the `BottomNav` already handles all primary mobile navigation, the `TopNavbar` does not need to be transparent on any route.
 
 **Resolution Applied:** The `mobileHeaderBg` conditional variable was **removed entirely** from `TopNavbar.tsx`. The header now carries a single, unconditional `bg-navy` class, ensuring all icon buttons remain visible and readable in both Light and Dark mode, on all routes, at all viewport sizes.
+
+### 4.6 Home Dashboard Layout & "Trojan Horse" Strategy
+
+The `HomePage` implements a responsive dashboard layout designed to surface critical user functionality while silently reserving space for future monetization.
+
+*   **Mobile (< `md`):** All widgets stack vertically in a single column layout.
+*   **Tablet/Desktop (`md` and above):** The dashboard switches to a 2-column grid (`grid-cols-1 md:grid-cols-2`).
+    *   The **Greeting** header spans the full width at the top.
+    *   The **Continue Reading** card spans 3 rows vertically on the left side (`md:row-span-3`).
+    *   The **Recent Authorities** list (Header + 3 cards) occupies the right column (`md:col-start-2`).
+*   **"Trojan Horse" Ad Reservation (Daily Legal Maxim):**
+    *   To prepare for Phase 2 monetization without degrading the user experience or revealing the ad strategy prematurely, the bottom-most widget is a "Daily Legal Maxim" card.
+    *   It spans the full width (`md:col-span-full`).
+    *   It carries a strict `min-h-[100px]` constraint. This exactly mimics the physical dimensions of a standard 320x100 mobile banner ad, ensuring the UI space is pre-allocated and tested across all devices before ads are actually injected.
+
+### 4.7 Broadening Target Audience (UI Copy Polish)
+
+The Home Dashboard copy has been generalized to welcome a broader audience (including everyday citizens and students), shifting away from strictly legal professional terminology.
+*   **Greeting:** "Counsel" was removed from dynamic greetings (e.g., "Good morning" instead of "Good morning, Counsel").
+*   **Dashboard Subtitle:** Updated from "Your legal research dashboard" to "Your Fundamental Rights Guide dashboard" to better reflect the app's accessible focus.

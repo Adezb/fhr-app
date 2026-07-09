@@ -36,20 +36,25 @@ function stripHtml(html: string): string {
 
 // ─── Snippet Builder ─────────────────────────────────────────────────
 /**
- * Builds a ~120-character context window around the first occurrence
- * of any matched term, wrapping it in a <mark> tag using Judicial Gold.
+ * Builds a ~120-character context window around the matched query.
+ * Prioritizes an exact phrase match. If not found (due to fuzzy matching),
+ * falls back to the earliest occurring token from the terms array.
+ * Wraps the match in a <mark> tag using Judicial Gold.
  */
-function buildSnippet(text: string, terms: string[]): string {
+function buildSnippet(text: string, query: string, terms: string[]): string {
   const lowerText = text.toLowerCase();
-  let earliestIndex = -1;
-  let matchedTerm = '';
+  const lowerQuery = query.toLowerCase();
+  let earliestIndex = lowerText.indexOf(lowerQuery);
+  let matchedTerm = query;
 
-  // Find the earliest occurring term in the text
-  for (const term of terms) {
-    const idx = lowerText.indexOf(term.toLowerCase());
-    if (idx !== -1 && (earliestIndex === -1 || idx < earliestIndex)) {
-      earliestIndex = idx;
-      matchedTerm = term;
+  if (earliestIndex === -1) {
+    // Fallback to finding individual terms
+    for (const term of terms) {
+      const idx = lowerText.indexOf(term.toLowerCase());
+      if (idx !== -1 && (earliestIndex === -1 || idx < earliestIndex)) {
+        earliestIndex = idx;
+        matchedTerm = term;
+      }
     }
   }
 
@@ -99,6 +104,7 @@ export async function buildBookIndex(): Promise<MiniSearch> {
       boost: { title: 2 },               // Title matches rank higher
       fuzzy: 0.2,                         // Tolerate minor typos
       prefix: true,                       // Enable prefix matching
+      combineWith: 'AND',                 // Multi-word queries stay together
     },
   });
 
@@ -132,6 +138,7 @@ export async function buildAuthoritiesIndex(): Promise<MiniSearch> {
       boost: { title: 2 },
       fuzzy: 0.2,
       prefix: true,
+      combineWith: 'AND',
     },
   });
 
@@ -180,7 +187,7 @@ export async function search(query: string): Promise<SearchResults> {
       id: result.id as string,
       title: result.title as string,
       slug: result.slug as string,
-      snippet: buildSnippet(plaintext, result.terms),
+      snippet: buildSnippet(plaintext, trimmedQuery, result.terms),
       source: 'book' as const,
     };
   });
@@ -193,7 +200,7 @@ export async function search(query: string): Promise<SearchResults> {
       id: result.id as string,
       title: result.title as string,
       slug: result.slug as string,
-      snippet: buildSnippet(plaintext, result.terms),
+      snippet: buildSnippet(plaintext, trimmedQuery, result.terms),
       source: 'authority' as const,
     };
   });

@@ -11,7 +11,7 @@ interface SearchOverlayProps {
   onClose: () => void;
 }
 
-function ResultCard({ result, onNavigate }: { result: SearchResult; onNavigate: () => void }) {
+function ResultCard({ result, onNavigate, query }: { result: SearchResult; onNavigate: () => void; query: string }) {
   const navigate = useNavigate();
   const route = result.source === 'book'
     ? `/book/${result.slug}`
@@ -20,7 +20,7 @@ function ResultCard({ result, onNavigate }: { result: SearchResult; onNavigate: 
   return (
     <button
       onClick={() => {
-        navigate(route);
+        navigate({ pathname: route, search: `?q=${encodeURIComponent(query)}` });
         onNavigate();
       }}
       className="w-full text-left p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-midnight-light hover:border-gold-light dark:hover:border-gold hover:shadow-md transition-all duration-200 group"
@@ -41,11 +41,13 @@ function ResultSection({
   results,
   icon,
   onNavigate,
+  query,
 }: {
   title: string;
   results: SearchResult[];
   icon: React.ReactNode;
   onNavigate: () => void;
+  query: string;
 }) {
   if (results.length === 0) return null;
 
@@ -60,7 +62,7 @@ function ResultSection({
       </div>
       <div className="space-y-2">
         {results.map((result) => (
-          <ResultCard key={result.id} result={result} onNavigate={onNavigate} />
+          <ResultCard key={result.id} result={result} onNavigate={onNavigate} query={query} />
         ))}
       </div>
     </div>
@@ -166,6 +168,7 @@ export default function SearchOverlay({
                 title="Book Chapters"
                 results={results.bookResults}
                 onNavigate={onClose}
+                query={query}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -178,6 +181,7 @@ export default function SearchOverlay({
                 title="Authorities"
                 results={results.authorityResults}
                 onNavigate={onClose}
+                query={query}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />

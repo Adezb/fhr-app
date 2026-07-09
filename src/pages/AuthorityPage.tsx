@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
 import ReaderView from '../components/reader/ReaderView';
@@ -7,6 +7,9 @@ import ReaderView from '../components/reader/ReaderView';
 export default function AuthorityPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const highlightQuery = searchParams.get('q') || undefined;
   
   const [authority, setAuthority] = useState<Authority | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,8 +33,10 @@ export default function AuthorityPage() {
         
         setAuthority(current);
         
-        // Auto scroll to top when authority loads
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Auto scroll to top when authority loads, unless highlighting a search result
+        if (!searchParams.get('q')) {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
       } catch (error) {
         console.error("Failed to load authority:", error);
       } finally {
@@ -67,6 +72,8 @@ export default function AuthorityPage() {
       <ReaderView 
         title={authority.title} 
         contentHtml={authority.content_html} 
+        searchQuery={highlightQuery}
+        searchKey={location.key}
       />
     </>
   );

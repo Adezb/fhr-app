@@ -138,3 +138,17 @@ All future components must match these established patterns for consistency.
 - **Spacing**: `p-4 rounded-lg`
 - **Interactive**: `group hover:border-gold-light dark:hover:border-gold hover:shadow-md transition-all duration-200`
 - **Borders**: `border border-slate-200 dark:border-slate-800`
+
+---
+
+## Transient Highlight V2 (In-Page Search Match)
+- **File**: `src/components/reader/ReaderView.tsx`
+- **Date**: 2026-07-09
+- **Background**: `bg-gold-light` (fades to `bg-transparent`)
+- **Text Color**: `text-navy` (fades to `text-inherit`)
+- **Spacing**: `px-1 rounded-sm`
+- **Animation**: `transition-colors duration-1000 ease-in-out` (triggered dynamically after a 2500ms timeout)
+- **UX**: Uses standard DOM `TreeWalker` to split text nodes safely and automatically `scrollIntoView`.
+- **Architecture**: 
+  - Employs a double `requestAnimationFrame` to guarantee the DOM is fully painted by the browser before searching.
+  - The 2500ms fade-out timer is isolated in a `useRef` to prevent premature cancellation by React's aggressive re-render/cleanup cycles.

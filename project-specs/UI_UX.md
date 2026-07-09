@@ -75,6 +75,11 @@ Four distinct font families are supported:
 *   **Results Rendering:** 
     *   Segregate into two distinct sections with muted headers: "MATCHES IN CORE BOOK" and "MATCHES IN AUTHORITIES".
     *   *Highlighting:* The exact search query string matched within the snippet must be wrapped in a `<mark>` tag styled with Judicial Gold background (`bg-[#FEF08A] dark:bg-[#B45309] text-black dark:text-white`).
+*   **Transient Highlight V2 (In-Page Match):**
+    *   Clicking a result passes the query string via the URL `?q=` parameter.
+    *   The `ReaderView` automatically uses a `TreeWalker` to safely find the exact phrase in the DOM without breaking HTML, wraps it in a `<mark>` tag, and scrolls it into view.
+    *   **Architecture Note:** To avoid race conditions, the DOM walk and injection are wrapped in a **double `requestAnimationFrame`** to ensure the browser has fully painted the `dangerouslySetInnerHTML` tree before searching. The 2500ms fade-out timeout is decoupled into a `useRef` to survive React's aggressive cleanup cycles.
+    *   The highlight fades out seamlessly over 2500ms using CSS `transition-colors duration-1000` fading from `bg-gold-light text-navy` to `bg-transparent text-inherit`.
 
 ### 3.4 Admin CMS Dashboard (Desktop Optimized)
 *   **Layout:** Fixed left sidebar navigation (`w-64`), scrollable main content area right.

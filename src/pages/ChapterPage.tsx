@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
 import ReaderView from '../components/reader/ReaderView';
@@ -8,6 +8,9 @@ import ReaderBottomNav from '../components/reader/ReaderBottomNav';
 export default function ChapterPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const highlightQuery = searchParams.get('q') || undefined;
   
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [prevChapter, setPrevChapter] = useState<Chapter | null>(null);
@@ -48,8 +51,10 @@ export default function ChapterPage() {
           setNextChapter(null);
         }
         
-        // Auto scroll to top when chapter changes
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Auto scroll to top when chapter changes, unless we are highlighting a search result
+        if (!searchParams.get('q')) {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
       } catch (error) {
         console.error("Failed to load chapter:", error);
       } finally {
@@ -80,6 +85,8 @@ export default function ChapterPage() {
       <ReaderView 
         title={chapter.title} 
         contentHtml={chapter.content_html} 
+        searchQuery={highlightQuery}
+        searchKey={location.key}
       />
       <ReaderBottomNav 
         prevSlug={prevChapter?.slug || null}

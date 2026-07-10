@@ -116,6 +116,8 @@ All future components must match these established patterns for consistency.
 - **Dismiss Link**: `text-sm hover:underline bg-transparent border-none outline-none` (Replaces Secondary Button)
 - **Spacing**: `fixed inset-0 p-4`, Dialog `p-6 max-w-sm`, Gap `gap-3`, iOS Fallback Card `p-4`
 - **Borders/Shadows**: Dialog `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`, iOS Fallback Card `border border-slate-200 dark:border-slate-700 rounded-lg`
+- **Feature List**: `list-disc list-outside pl-5 mt-3 mb-6 text-sm text-left mx-auto w-fit space-y-1`
+- **List Items**: `font-bold text-text-primary dark:text-text-heading-dark`
 
 ---
 
@@ -172,3 +174,4 @@ All future components must match these established patterns for consistency.
 - **Button**: `bg-gold text-navy hover:bg-gold-light focus:ring-navy`
 - **Spacing**: `fixed inset-0 p-4`, Dialog `p-6 max-w-sm`, Gap `gap-3`
 - **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`
+- **Architecture Note (PWA Events)**: To solve Android event suspension, we employ a Dual-Trigger Strategy. The success modal renders immediately upon resolving the native prompt (`outcome === 'accepted'`). As a fallback for native-menu installs, the root `App.tsx` globally listens for `appinstalled` and dispatches a custom `pwa-success-install` event to synchronise with the hook state.

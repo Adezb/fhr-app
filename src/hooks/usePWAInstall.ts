@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isMobileOrTabletDevice } from '../utils/device';
 
 // Define the BeforeInstallPromptEvent interface as it's not standard in TypeScript DOM lib yet
 interface BeforeInstallPromptEvent extends Event {
@@ -37,20 +38,18 @@ export function usePWAInstall() {
       setShowPrompt(true);
     };
 
-    const handleAppInstalled = () => {
-      const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 1024;
-      if (isMobileOrTablet) {
-        setShowPrompt(false);
-        setShowSuccessModal(true);
-      }
+    const handleGlobalSuccess = () => {
+      setShowPrompt(false);
+      setShowSuccessModal(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    // Listen for the global fallback event dispatched from App.tsx
+    window.addEventListener('pwa-success-install', handleGlobalSuccess);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener('pwa-success-install', handleGlobalSuccess);
     };
   }, []);
 
@@ -63,6 +62,9 @@ export function usePWAInstall() {
     
     if (outcome === 'accepted') {
       console.log('User accepted the PWA install prompt');
+      if (isMobileOrTabletDevice()) {
+        setShowSuccessModal(true);
+      }
     } else {
       console.log('User dismissed the PWA install prompt');
       handleDismiss(); // Trigger cooldown if they dismiss via the native prompt

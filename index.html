@@ -1,60 +1,65 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- SEO: Default meta (overridden dynamically by React per page) -->
-    <title>Fundamental Rights Enforcement in Nigeria</title>
-    <meta name="description" content="A practical guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline." />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Open Graph: Defaults (dynamic OG handled by Vercel Edge Middleware for bots) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Fundamental Rights Enforcement" />
-    <meta property="og:url" content="https://www.fhrnigeria.app/" />
-    <meta property="og:image" content="https://www.fhrnigeria.app/og-image.png" />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:title" content="Fundamental Rights Enforcement in Nigeria" />
-    <meta property="og:description" content="A practical guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline." />
+  <!-- SEO: Default meta (overridden dynamically by React per page) -->
+  <title>Fundamental Rights Enforcement in Nigeria</title>
+  <meta name="description"
+    content="A practice guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline." />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://www.fhrnigeria.app/" />
-    <meta name="twitter:title" content="Fundamental Rights Enforcement in Nigeria" />
-    <meta name="twitter:description" content="A practical guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline." />
-    <meta name="twitter:image" content="https://www.fhrnigeria.app/og-image.png" />
+  <!-- Open Graph: Defaults (dynamic OG handled by Vercel Edge Middleware for bots) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Fundamental Rights Enforcement" />
+  <meta property="og:url" content="https://www.fhrnigeria.app/" />
+  <meta property="og:image" content="https://www.fhrnigeria.app/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:title" content="Fundamental Rights Enforcement in Nigeria" />
+  <meta property="og:description"
+    content="A practice guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline." />
 
-    <!-- Google Fonts: Inter (UI) + Merriweather (Reader) — UI/UX §1.2 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://www.fhrnigeria.app/" />
+  <meta name="twitter:title" content="Fundamental Rights Enforcement in Nigeria" />
+  <meta name="twitter:description"
+    content="A practice guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline." />
+  <meta name="twitter:image" content="https://www.fhrnigeria.app/og-image.png" />
 
-    <!-- PWA: Theme color matching Deep Navy -->
-    <meta name="theme-color" content="#1A2B4C" />
+  <!-- Google Fonts: Inter (UI) + Merriweather (Reader) — UI/UX §1.2 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet" />
 
-    <!-- Theme Initialization Script (Prevents FOUC / Theme Flash) -->
-    <script>
-      (function() {
-        try {
-          var theme = localStorage.getItem('fhr_theme');
-          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (theme === '"dark"' || theme === 'dark' || (!theme && systemDark)) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        } catch (e) {}
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- PWA: Theme color matching Deep Navy -->
+  <meta name="theme-color" content="#1A2B4C" />
+
+  <!-- Theme Initialization Script (Prevents FOUC / Theme Flash) -->
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('fhr_theme');
+        var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (theme === '"dark"' || theme === 'dark' || (!theme && systemDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) { }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

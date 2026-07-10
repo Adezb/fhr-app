@@ -30,11 +30,16 @@ export default function InstallModal() {
             </svg>
           </div>
           <h3 className="text-xl font-serif font-bold text-navy dark:text-text-heading-dark mb-2">
-            Install FHR Offline Guide
+            Install FHR Offline Practice Guide
           </h3>
-          <p className="text-sm text-text-body dark:text-text-body-dark mb-6 leading-relaxed">
-            Install this guide to your device for instant, offline access. Read up on your fundamental rights anywhere, anytime—no internet connection required.
+          <p className="text-sm text-text-body dark:text-text-body-dark leading-relaxed">
+            Install this guide to your device for instant, offline access. Read up on your fundamental rights anywhere, anytime—no internet connection required. On-the-go access to:
           </p>
+          <ul className="list-disc list-outside pl-5 mt-3 mb-6 text-sm text-left mx-auto w-fit space-y-1">
+            <li className="font-bold text-text-primary dark:text-text-heading-dark">Chapter IV of the 1999 Constitution of Nigeria</li>
+            <li className="font-bold text-text-primary dark:text-text-heading-dark">FREP Rules 2009</li>
+            <li className="font-bold text-text-primary dark:text-text-heading-dark">African Charter on Human and Peoples' Rights (Ratification and Enforcement) Act</li>
+          </ul>
         </div>
 
         <div className="flex flex-col gap-3">

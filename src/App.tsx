@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import HomePage from './pages/HomePage';
@@ -7,8 +8,24 @@ import AuthoritiesHubPage from './pages/AuthoritiesHubPage';
 import AuthorityPage from './pages/AuthorityPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import { isMobileOrTabletDevice } from './utils/device';
 
 function App() {
+  useEffect(() => {
+    // Global fallback listener for native-menu PWA installations
+    const handleAppInstalled = () => {
+      if (isMobileOrTabletDevice()) {
+        window.dispatchEvent(new Event('pwa-success-install'));
+      }
+    };
+    
+    window.addEventListener('appinstalled', handleAppInstalled);
+    
+    return () => {
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>

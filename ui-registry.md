@@ -175,3 +175,17 @@ All future components must match these established patterns for consistency.
 - **Spacing**: `fixed inset-0 p-4`, Dialog `p-6 max-w-sm`, Gap `gap-3`
 - **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`
 - **Architecture Note (PWA Events)**: To solve Android event suspension, we employ a Dual-Trigger Strategy. The success modal renders immediately upon resolving the native prompt (`outcome === 'accepted'`). As a fallback for native-menu installs, the root `App.tsx` globally listens for `appinstalled` and dispatches a custom `pwa-success-install` event to synchronise with the hook state.
+
+---
+
+## HomePage Hero Section
+- **File**: `src/pages/HomePage.tsx`
+- **Date**: 2026-07-10 (Hero Redesign)
+- **Layout**: `flex flex-col md:flex-row justify-between items-start md:items-center gap-6` — stacks vertically on mobile, horizontal on desktop
+- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Subtitle `text-text-muted`, Sub-heading `text-navy dark:text-text-heading-dark font-medium`, List items `text-text-body dark:text-text-body-dark`
+- **Typography**: Heading `text-2xl sm:text-3xl font-serif font-bold`, Sub-heading `text-base`, List `text-sm`
+- **Feature List**: `list-disc list-outside pl-5 mt-2 space-y-1`
+- **Book Cover Image**: `w-32 md:w-48 rounded-md object-cover`
+- **Book Cover Shadows (Light)**: `shadow-lg`
+- **Book Cover Shadows (Dark)**: `dark:ring-1 dark:ring-slate-700 dark:shadow-xl dark:shadow-black/50` — ring prevents the cover from blending into dark backgrounds
+- **Spacing**: Container `mb-8`, Subtitle `mt-1`, Sub-heading `mt-4`, List `mt-2 space-y-1`

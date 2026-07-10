@@ -36,12 +36,12 @@ export default function HomePage() {
       try {
         const db = await getDB();
         const allAuths = await db.getAllFromIndex('authorities', 'by-published-date');
-        
+
         const recent = allAuths
           .filter(a => a.is_published)
           .reverse()
           .slice(0, 3);
-          
+
         setAuthorities(recent);
       } catch (error) {
         console.error("Failed to load authorities:", error);
@@ -49,25 +49,46 @@ export default function HomePage() {
         setIsLoading(false);
       }
     }
-    
+
     loadRecentAuthorities();
   }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      {/* Greeting (Full Width) */}
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-navy dark:text-text-heading-dark">
-          {greeting}
-        </h1>
-        <p className="mt-1 text-text-muted">Your Fundamental Rights Guide dashboard</p>
+      {/* Hero Section */}
+      <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        {/* Left Column — Copy */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-navy dark:text-text-heading-dark">
+            {greeting}
+          </h1>
+          <p className="mt-1 text-text-muted">Your Fundamental Rights Guide dashboard</p>
+
+          <p className="mt-4 text-base text-navy dark:text-text-heading-dark font-medium">
+            On-the-go access to:
+          </p>
+          <ul className="list-disc list-outside pl-5 mt-2 space-y-1 text-sm text-text-body dark:text-text-body-dark">
+            <li>Chapter IV of the 1999 Constitution of Nigeria</li>
+            <li>FREP Rules 2009</li>
+            <li>African Charter on Human and Peoples' Rights (Ratification and Enforcement) Act</li>
+          </ul>
+        </div>
+
+        {/* Right Column — Book Cover */}
+        <div className="shrink-0">
+          <img
+            src="/FRE-BOOK-COVER-788x1024.png"
+            alt="Fundamental Rights Enforcement in Nigeria Book Cover"
+            className="w-32 md:w-48 rounded-md object-cover shadow-lg dark:ring-1 dark:ring-slate-700 dark:shadow-xl dark:shadow-black/50"
+          />
+        </div>
       </div>
 
       {/* Dashboard Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
+
         {/* Continue Reading Card */}
-        <Link 
+        <Link
           to={progress ? `/book/${progress.chapterSlug}` : "/book"}
           className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300"
         >
@@ -75,18 +96,18 @@ export default function HomePage() {
             <div className="text-xs uppercase tracking-widest text-gold font-semibold flex items-center gap-2">
               <span>📖</span> {progress ? 'CONTINUE READING' : 'START READING'}
             </div>
-            
+
             <h2 className="text-lg font-serif font-bold !text-white mt-4 group-hover:!text-gold-light transition-colors">
               {progress ? progress.bookTitle : 'Fundamental Rights Enforcement'}
             </h2>
             <p className="text-sm text-slate-300 mt-1">
               {progress ? progress.chapterTitle : 'Begin with the Front Matter'}
             </p>
-            
+
             {progress && (
               <div className="mt-6">
                 <div className="bg-white/10 rounded-full h-2 overflow-hidden">
-                  <div 
+                  <div
                     className="bg-gold h-full rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${progress.scrollPercentage}%` }}
                   />
@@ -97,7 +118,7 @@ export default function HomePage() {
               </div>
             )}
           </div>
-          
+
           <div className="text-gold font-medium text-sm mt-6 flex items-center gap-1 group-hover:text-gold-light transition-colors group-hover:translate-x-1 duration-200 w-fit">
             {progress ? 'Resume' : 'Start Reading'} &rarr;
           </div>
@@ -108,7 +129,7 @@ export default function HomePage() {
           <h2 className="text-xl font-serif font-bold text-navy dark:text-text-heading-dark">
             Recent Authorities
           </h2>
-          <Link 
+          <Link
             to="/authorities"
             className="text-sm font-medium text-gold hover:text-gold-light transition-colors flex items-center gap-1 hover:translate-x-0.5 duration-200"
           >
@@ -119,9 +140,9 @@ export default function HomePage() {
         {/* Recent Authorities Feed */}
         {isLoading ? (
           <div className="md:col-start-2 space-y-4">
-             {[1, 2, 3].map(i => (
-               <div key={i} className="h-32 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />
-             ))}
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-32 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />
+            ))}
           </div>
         ) : authorities.length === 0 ? (
           <div className="md:col-start-2 text-center py-8 text-sm text-text-muted bg-white dark:bg-midnight-light rounded-xl border border-slate-200 dark:border-slate-800">
@@ -151,7 +172,7 @@ export default function HomePage() {
                 )}
                 <div className="mt-4 flex items-center justify-between text-xs text-text-muted uppercase tracking-wider font-medium">
                   <span>
-                    {auth.published_at 
+                    {auth.published_at
                       ? new Date(auth.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
                       : 'Published'}
                   </span>

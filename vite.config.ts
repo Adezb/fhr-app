@@ -23,11 +23,11 @@ export default defineConfig({
        * Controls how the app appears when installed on the user's device.
        */
       manifest: {
-        name: 'Fundamental Rights Enforcement in Nigeria',
-        short_name: 'Rights Guide',
+        name: 'FHR Guide',
+        short_name: 'FHR Guide',
         description: 'A practical offline guide to fundamental rights enforcement in Nigeria. Instant courtroom access without internet.',
-        theme_color: '#1A2B4C',    // Deep Navy — matches our primary brand token
-        background_color: '#1A2B4C', // Splash screen background
+        theme_color: '#0f172a',    // Dark navy hex code for PWA Splash Screen
+        background_color: '#0f172a', // Splash screen background
         display: 'standalone',      // Hides browser chrome when installed
         orientation: 'portrait',
         scope: '/',

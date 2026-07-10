@@ -152,3 +152,12 @@ All future components must match these established patterns for consistency.
 - **Architecture**: 
   - Employs a double `requestAnimationFrame` to guarantee the DOM is fully painted by the browser before searching.
   - The 2500ms fade-out timer is isolated in a `useRef` to prevent premature cancellation by React's aggressive re-render/cleanup cycles.
+
+---
+
+## PWA Manifest & Meta Branding
+- **File**: `vite.config.ts` and `index.html`
+- **Date**: 2026-07-10 (OpenGraph & Splash Screen Polish)
+- **Background**: Splash Screen `background_color` and `theme_color` set to `#0f172a` (Dark Navy) for a seamless dark mode transition.
+- **Branding**: App `name` and `short_name` set to `FHR Guide`.
+- **Social Sharing**: OpenGraph and Twitter image meta tags mapped to absolute URL `https://www.fhrnigeria.app/og-image.png` (`1200x630`).

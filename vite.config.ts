@@ -23,9 +23,9 @@ export default defineConfig({
        * Controls how the app appears when installed on the user's device.
        */
       manifest: {
-        name: 'FHR Guide',
-        short_name: 'FHR Guide',
-        description: 'A practical offline guide to fundamental rights enforcement in Nigeria. Instant courtroom access without internet.',
+        name: 'FHR Practice Guide',
+        short_name: 'FHR Practice Guide',
+        description: 'A practical offline guide to fundamental rights enforcement in Nigeria. On-the-go access to Fundamental Rights Practice Guide—no internet connection required.',
         theme_color: '#0f172a',    // Dark navy hex code for PWA Splash Screen
         background_color: '#0f172a', // Splash screen background
         display: 'standalone',      // Hides browser chrome when installed

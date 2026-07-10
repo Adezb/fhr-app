@@ -16,6 +16,7 @@ const COOLDOWN_HOURS = 72;
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -36,10 +37,20 @@ export function usePWAInstall() {
       setShowPrompt(true);
     };
 
+    const handleAppInstalled = () => {
+      const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 1024;
+      if (isMobileOrTablet) {
+        setShowPrompt(false);
+        setShowSuccessModal(true);
+      }
+    };
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
@@ -67,5 +78,9 @@ export function usePWAInstall() {
     setShowPrompt(false);
   };
 
-  return { showPrompt, handleInstall, handleDismiss };
+  const handleDismissSuccess = () => {
+    setShowSuccessModal(false);
+  };
+
+  return { showPrompt, showSuccessModal, handleInstall, handleDismiss, handleDismissSuccess };
 }

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
+import InstallSuccessModal from './InstallSuccessModal';
 
 export default function InstallModal() {
-  const { showPrompt, handleInstall, handleDismiss } = usePWAInstall();
+  const { showPrompt, showSuccessModal, handleInstall, handleDismiss, handleDismissSuccess } = usePWAInstall();
   const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
@@ -11,6 +12,10 @@ export default function InstallModal() {
       (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
     setIsIOS(checkIOS);
   }, []);
+
+  if (showSuccessModal) {
+    return <InstallSuccessModal onDismiss={handleDismissSuccess} />;
+  }
 
   if (!showPrompt) return null;
 

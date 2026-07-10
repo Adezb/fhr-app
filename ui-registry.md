@@ -161,3 +161,14 @@ All future components must match these established patterns for consistency.
 - **Background**: Splash Screen `background_color` and `theme_color` set to `#0f172a` (Dark Navy) for a seamless dark mode transition.
 - **Branding**: App `name` and `short_name` set to `FHR Guide`.
 - **Social Sharing**: OpenGraph and Twitter image meta tags mapped to absolute URL `https://www.fhrnigeria.app/og-image.png` (`1200x630`).
+
+---
+
+## InstallSuccessModal
+- **File**: `src/components/pwa/InstallSuccessModal.tsx`
+- **Date**: 2026-07-10 (Success Flow)
+- **Background**: Modal overlay `bg-navy/60 backdrop-blur-sm`, Dialog `bg-surface dark:bg-midnight`
+- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Body `text-text-body dark:text-text-body-dark`, Success Icon `text-green-400`
+- **Button**: `bg-gold text-navy hover:bg-gold-light focus:ring-navy`
+- **Spacing**: `fixed inset-0 p-4`, Dialog `p-6 max-w-sm`, Gap `gap-3`
+- **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`

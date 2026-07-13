@@ -56,18 +56,17 @@ export default function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       {/* Hero Section */}
-      <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12">
         {/* Left Column — Copy */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 w-full">
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-navy dark:text-text-heading-dark">
             {greeting}
           </h1>
-          <p className="mt-1 text-text-muted">Your Fundamental Rights Guide dashboard</p>
 
           <p className="mt-4 text-base text-navy dark:text-text-heading-dark font-medium">
             On-the-go access to:
           </p>
-          <ul className="list-disc list-outside pl-5 mt-2 space-y-1 text-sm text-text-body dark:text-text-body-dark">
+          <ul className="list-disc list-outside pl-5 mt-2 space-y-1 leading-snug text-sm text-text-body dark:text-text-body-dark">
             <li>Chapter IV of the 1999 Constitution of Nigeria</li>
             <li>FREP Rules 2009</li>
             <li>African Charter on Human and Peoples' Rights (Ratification and Enforcement) Act</li>
@@ -75,12 +74,18 @@ export default function HomePage() {
         </div>
 
         {/* Right Column — Book Cover */}
-        <div className="shrink-0">
-          <img
-            src="/FRE-BOOK-COVER-788x1024.png"
-            alt="Fundamental Rights Enforcement in Nigeria Book Cover"
-            className="w-32 md:w-48 rounded-md object-cover shadow-lg dark:ring-1 dark:ring-slate-700 dark:shadow-xl dark:shadow-black/50"
-          />
+        <div className="relative group perspective-[1200px] shrink-0 w-full max-w-[220px] sm:max-w-[260px] md:max-w-[340px] lg:max-w-[400px] mx-auto md:mx-0 flex justify-center md:justify-end">
+          <div className="relative w-full h-full transition-transform duration-500 ease-out [transform-style:preserve-3d] [transform:rotateX(2deg)_rotateY(-4deg)] group-hover:[transform:rotateX(0deg)_rotateY(0deg)]">
+            <img
+              src="/fhr-full-cover.png"
+              alt="Fundamental Rights Enforcement in Nigeria Book Cover"
+              className="w-full h-auto rounded-sm shadow-2xl shadow-slate-900/20 dark:shadow-black/60 dark:ring-1 dark:ring-white/10 object-cover"
+            />
+            {/* Spine Fold Shadow */}
+            <div className="absolute inset-y-0 left-1/2 w-12 -ml-6 bg-gradient-to-r from-transparent via-black/40 dark:via-black/70 to-transparent pointer-events-none mix-blend-multiply" />
+            {/* Page Lighting Highlight */}
+            <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-white/10 to-transparent pointer-events-none rounded-l-sm" />
+          </div>
         </div>
       </div>
 
@@ -90,14 +95,14 @@ export default function HomePage() {
         {/* Continue Reading Card */}
         <Link
           to={progress ? `/book/${progress.chapterSlug}` : "/book"}
-          className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300"
+          className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-4 md:p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300"
         >
           <div>
             <div className="text-xs uppercase tracking-widest text-gold font-semibold flex items-center gap-2">
               <span>📖</span> {progress ? 'CONTINUE READING' : 'START READING'}
             </div>
 
-            <h2 className="text-lg font-serif font-bold !text-white mt-4 group-hover:!text-gold-light transition-colors">
+            <h2 className="text-lg font-serif font-bold !text-white mt-2 md:mt-4 group-hover:!text-gold-light transition-colors">
               {progress ? progress.bookTitle : 'Fundamental Rights Enforcement'}
             </h2>
             <p className="text-sm text-slate-300 mt-1">
@@ -105,7 +110,7 @@ export default function HomePage() {
             </p>
 
             {progress && (
-              <div className="mt-6">
+              <div className="mt-4 md:mt-6">
                 <div className="bg-white/10 rounded-full h-2 overflow-hidden">
                   <div
                     className="bg-gold h-full rounded-full transition-all duration-500 ease-out"
@@ -119,7 +124,7 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="text-gold font-medium text-sm mt-6 flex items-center gap-1 group-hover:text-gold-light transition-colors group-hover:translate-x-1 duration-200 w-fit">
+          <div className="text-gold font-medium text-sm mt-4 md:mt-6 flex items-center gap-1 group-hover:text-gold-light transition-colors group-hover:translate-x-1 duration-200 w-fit">
             {progress ? 'Resume' : 'Start Reading'} &rarr;
           </div>
         </Link>

@@ -184,12 +184,26 @@ All future components must match these established patterns for consistency.
 
 ## HomePage Hero Section
 - **File**: `src/pages/HomePage.tsx`
-- **Date**: 2026-07-10 (Hero Redesign)
-- **Layout**: `flex flex-col md:flex-row justify-between items-start md:items-center gap-6` — stacks vertically on mobile, horizontal on desktop
-- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Subtitle `text-text-muted`, Sub-heading `text-navy dark:text-text-heading-dark font-medium`, List items `text-text-body dark:text-text-body-dark`
+- **Date**: 2026-07-13 (3D Book Cover Effect)
+- **Layout**: `flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12` — stacks vertically on mobile, horizontal on desktop, center-aligned
+- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Sub-heading `text-navy dark:text-text-heading-dark font-medium`, List items `text-text-body dark:text-text-body-dark`
 - **Typography**: Heading `text-2xl sm:text-3xl font-serif font-bold`, Sub-heading `text-base`, List `text-sm`
-- **Feature List**: `list-disc list-outside pl-5 mt-2 space-y-1`
-- **Book Cover Image**: `w-32 md:w-48 rounded-md object-cover`
-- **Book Cover Shadows (Light)**: `shadow-lg`
-- **Book Cover Shadows (Dark)**: `dark:ring-1 dark:ring-slate-700 dark:shadow-xl dark:shadow-black/50` — ring prevents the cover from blending into dark backgrounds
-- **Spacing**: Container `mb-8`, Subtitle `mt-1`, Sub-heading `mt-4`, List `mt-2 space-y-1`
+- **Feature List**: `list-disc list-outside pl-5 mt-2 space-y-1 leading-snug`
+- **Book Cover Image Container (3D Stage)**: `relative group perspective-[1200px] shrink-0 w-full max-w-[220px] sm:max-w-[260px] md:max-w-[340px] lg:max-w-[400px] mx-auto md:mx-0 flex justify-center md:justify-end`
+- **Book Cover Image Wrapper (3D Transform)**: `relative w-full h-full transition-transform duration-500 ease-out [transform-style:preserve-3d] [transform:rotateX(2deg)_rotateY(-4deg)] group-hover:[transform:rotateX(0deg)_rotateY(0deg)]`
+- **Book Cover Image Styling**: `w-full h-auto rounded-sm object-cover`
+- **Book Cover Mockup Effect (Light)**: `shadow-2xl shadow-slate-900/20`
+- **Book Cover Mockup Effect (Dark)**: `dark:shadow-black/60 dark:ring-1 dark:ring-white/10`
+- **Book Cover 3D Shadows**: Spine crease `absolute inset-y-0 left-1/2 w-12 -ml-6 bg-gradient-to-r from-transparent via-black/40 dark:via-black/70 to-transparent mix-blend-multiply`, Page lighting `absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-white/10 to-transparent rounded-l-sm`
+- **Spacing**: Container `mb-6 md:mb-8`, Sub-heading `mt-4`, List `mt-2 space-y-1`
+
+---
+
+## Continue Reading Card
+- **File**: `src/pages/HomePage.tsx`
+- **Date**: 2026-07-13 (Mobile Optimization)
+- **Background**: `bg-navy dark:bg-midnight-light`
+- **Borders/Shadows**: `rounded-xl shadow-lg border border-white/10`
+- **Padding**: `p-4 md:p-6` (compact on mobile to fit above the fold)
+- **Internal Spacing**: `mt-2 md:mt-4` on heading, `mt-4 md:mt-6` on progress bar and bottom action link
+- **Interactive**: `group hover:shadow-xl transition-all duration-300`

@@ -61,15 +61,19 @@ All future components must match these established patterns for consistency.
 
 ---
 
-## FontToggle (Multi-Font Dropdown)
+## FontToggle (Multi-Font Dropdown & Size Controls)
 - **File**: `src/components/reader/FontToggle.tsx`
-- **Date**: 2026-07-08 (Dropdown Upgrade)
+- **Date**: 2026-07-13 (Text Size Controls added)
 - **Trigger Button**: `p-2 text-white hover:text-gold-light`, contains accessible `aria-haspopup` attributes.
 - **Dropdown Menu**: `absolute right-0 mt-2 w-48 z-50` — right-aligned to prevent mobile overflow.
 - **Dropdown Styling**: `bg-white dark:bg-midnight border border-slate-200 dark:border-slate-800 rounded-md shadow-xl overflow-hidden`.
-- **Menu Items**: `w-full text-left px-4 py-3`, active state `bg-navy/5 dark:bg-gold/10 text-navy dark:text-gold-light font-bold`.
+- **Font Menu Items**: `w-full text-left px-4 py-3`, active state `bg-navy/5 dark:bg-gold/10 text-navy dark:text-gold-light font-bold`.
+- **Divider**: `my-2 border-slate-200 dark:border-slate-700`
+- **Size Controls Container**: `px-4 py-2 gap-4 pb-3`
+- **Size Buttons (Active)**: `text-text-body dark:text-text-body-dark hover:bg-slate-100 dark:hover:bg-slate-800`
+- **Size Buttons (Disabled)**: `text-slate-300 dark:text-slate-700 cursor-not-allowed`
+- **Size Buttons Shared**: `py-1.5 rounded-md font-medium transition-colors`
 - **UX**: Implements a native React click-outside listener to close the dropdown when tapping elsewhere.
-- **Border Radius**: `rounded-md`
 
 ---
 

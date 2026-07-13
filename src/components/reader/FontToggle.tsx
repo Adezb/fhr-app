@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useFont, type ReaderFont } from '../../hooks/useFont';
+import { useFont, useFontSize, type ReaderFont } from '../../hooks/useFont';
 
 const FONT_OPTIONS: { id: ReaderFont; label: string; className: string }[] = [
   { id: 'sans', label: 'Sans-Serif', className: 'font-sans' },
@@ -10,6 +10,7 @@ const FONT_OPTIONS: { id: ReaderFont; label: string; className: string }[] = [
 
 export default function FontToggle() {
   const { font, setFont } = useFont();
+  const { increaseFontSize, decreaseFontSize, canIncrease, canDecrease } = useFontSize();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -74,6 +75,33 @@ export default function FontToggle() {
               )}
             </button>
           ))}
+          <hr className="my-2 border-slate-200 dark:border-slate-700" />
+          <div className="flex items-center justify-between px-4 py-2 gap-4 pb-3">
+            <button
+              onClick={decreaseFontSize}
+              disabled={!canDecrease}
+              className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                canDecrease 
+                  ? 'text-text-body dark:text-text-body-dark hover:bg-slate-100 dark:hover:bg-slate-800' 
+                  : 'text-slate-300 dark:text-slate-700 cursor-not-allowed'
+              }`}
+              aria-label="Decrease Font Size"
+            >
+              A-
+            </button>
+            <button
+              onClick={increaseFontSize}
+              disabled={!canIncrease}
+              className={`flex-1 py-1.5 rounded-md text-base font-medium transition-colors ${
+                canIncrease 
+                  ? 'text-text-body dark:text-text-body-dark hover:bg-slate-100 dark:hover:bg-slate-800' 
+                  : 'text-slate-300 dark:text-slate-700 cursor-not-allowed'
+              }`}
+              aria-label="Increase Font Size"
+            >
+              A+
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -1,4 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { useFontSize } from '../../hooks/useFont';
+
+const proseSizeMap: Record<string, string> = {
+  'text-sm': 'prose-sm',
+  'text-base': 'prose-base',
+  'text-lg': 'prose-lg',
+  'text-xl': 'prose-xl',
+  'text-2xl': 'prose-2xl',
+};
 
 interface ReaderViewProps {
   title: string;
@@ -11,6 +20,7 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
   const contentRef = useRef<HTMLDivElement>(null);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const { fontSize } = useFontSize();
 
   useEffect(() => {
     setIsMounted(true);
@@ -107,7 +117,7 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
       */}
       <div 
         ref={contentRef}
-        className={`prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-headings:break-words prose-a:text-gold dark:prose-a:text-gold-light hover:prose-a:text-gold-dark prose-blockquote:border-l-gold ${isMounted ? '[&_*]:transition-colors [&_*]:duration-300 [&_*]:ease-in-out transition-colors duration-300 ease-in-out' : ''}`}
+        className={`prose ${proseSizeMap[fontSize]} dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-headings:break-words prose-a:text-gold dark:prose-a:text-gold-light hover:prose-a:text-gold-dark prose-blockquote:border-l-gold ${isMounted ? '[&_*]:transition-colors [&_*]:duration-300 [&_*]:ease-in-out transition-colors duration-300 ease-in-out' : ''}`}
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
     </article>

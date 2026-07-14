@@ -55,8 +55,9 @@ export default defineConfig({
        * Content data (chapters, authorities) is managed in IndexedDB by our sync engine.
        */
       workbox: {
-        // Precache everything Vite bundles (JS, CSS, HTML)
-        globPatterns: ['**/*.{js,css,html,ico,svg,woff2}'],
+        // Precache everything Vite bundles (JS, CSS, HTML, and Images)
+        globPatterns: ['**/*.{js,css,html,ico,svg,woff2,png,jpg,jpeg,webp}'],
+        maximumFileSizeToCacheInBytes: 3000000,
 
         // Cache Google Fonts at runtime (stale-while-revalidate keeps them fast)
         runtimeCaching: [

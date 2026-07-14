@@ -207,3 +207,143 @@ All future components must match these established patterns for consistency.
 - **Padding**: `p-4 md:p-6` (compact on mobile to fit above the fold)
 - **Internal Spacing**: `mt-2 md:mt-4` on heading, `mt-4 md:mt-6` on progress bar and bottom action link
 - **Interactive**: `group hover:shadow-xl transition-all duration-300`
+
+---
+
+## AdminShell (CMS Layout)
+- **File**: `src/components/admin/AdminShell.tsx`
+- **Date**: 2026-07-13 (Phase 1 Refinement)
+- **Background**: Main wrapper `bg-slate-50 dark:bg-midnight`, Sidebar `bg-navy dark:bg-midnight`, Content area `bg-slate-50 dark:bg-midnight`
+- **Text Colors**: Sidebar Headings `text-white`, Sidebar Body `text-slate-300`
+- **Layout Structure**: 
+  - Sidebar: `w-64 flex flex-col h-screen overflow-y-auto` (Strictly desktop, no mobile hidden classes)
+  - Sidebar Header/Footer: `shrink-0 sticky top-0 z-10 bg-navy dark:bg-midnight` (Footer is `bottom-0`)
+  - Sidebar Header Content: `flex justify-between items-center px-4 py-4` housing the logo and `<ThemeToggle />`.
+  - Main: `flex-1 flex flex-col h-screen overflow-hidden`
+  - Main Content Area: `flex-1 overflow-y-auto`
+- **Avatar Profile**: Circular `w-8 h-8 rounded-full bg-gold text-navy font-bold flex items-center justify-center`. Extracts first 2 capitalized letters from email.
+- **Navigation UI**: Includes `lucide-react` icons (size 18).
+- **Navigation (Active)**: `bg-white/10 text-gold-light`
+- **Navigation (Inactive)**: `text-slate-300 hover:bg-white/5 hover:text-white`
+- **RBAC (Phase 3)**: The 'Manage Core Book' navigation link is conditionally rendered and strictly reserved for the Super Admin (`cektopventures@gmail.com`).
+- **Borders**: `border-r border-white/10 dark:border-slate-800`, `border-b border-white/10 dark:border-slate-800`
+
+---
+
+## Editor Action Bar (CMS)
+- **Files**: `src/pages/admin/ChapterEditorPage.tsx`, `src/pages/admin/AuthorityEditorPage.tsx`
+- **Date**: 2026-07-13 (Phase 4 Fix)
+- **Container Layout**: `space-x-4 flex items-center`
+- **Cancel Button**: `text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200`
+- **Save Draft Button**: `px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white font-medium rounded-lg transition-colors disabled:opacity-70`
+- **Publish Button**: `px-6 py-2 bg-navy hover:bg-navy-light text-white font-medium rounded-lg transition-colors flex items-center justify-center min-w-[120px] disabled:opacity-70`
+- **Interaction Logic**: Replaces checkbox UI. Leverages a `publishIntent` boolean state updated via `onClick` on `type="submit"` buttons. Buttons use the `form="form-id"` attribute to explicitly trigger form submission outside the `<form>` wrapper to preserve native HTML5 validation.
+
+---
+
+## RichTextEditor (TipTap)
+- **File**: `src/components/admin/RichTextEditor.tsx`
+- **Date**: 2026-07-13 (Phase 6 Audit Fix)
+- **Container**: `border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-midnight` (Note: NO `overflow-hidden` on parent to allow sticky toolbar to work relative to scrolling viewport)
+- **Sticky Toolbar**: `sticky top-0 z-10 p-2 bg-slate-50 dark:bg-midnight-light border-b border-slate-300 dark:border-slate-700`
+- **Toolbar Buttons (Active)**: `bg-navy text-white dark:bg-gold-light dark:text-navy`
+- **Toolbar Buttons (Inactive)**: `text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700`
+- **Editor Prose Styles**: `prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-a:text-gold dark:prose-a:text-gold-light prose-blockquote:border-l-gold`
+
+---
+
+## AdminMobileGuard (CMS Desktop Enforcement)
+- **File**: `src/components/admin/AdminMobileGuard.tsx`
+- **Date**: 2026-07-13 (Phase 2 Refinement)
+- **Logic**: Uses `window.innerWidth < 768` event listener to strictly enforce desktop/tablet access for all `/admin-cms` routes.
+- **Background**: `bg-slate-50 dark:bg-midnight` (Full screen flex center layout)
+- **Message Card**: `bg-white dark:bg-midnight-light max-w-sm w-full rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-8 text-center`
+- **Icon Container**: `w-16 h-16 bg-navy/10 dark:bg-gold/10 text-navy dark:text-gold rounded-full flex items-center justify-center`
+
+---
+
+## AdminLoginPage
+- **File**: `src/pages/AdminLoginPage.tsx`
+- **Date**: 2026-07-13 (Phase 3 Refinement)
+- **Password Visibility Toggle**: Input is wrapped in a `relative` container. A `lucide-react` Eye/EyeOff button is positioned with `absolute inset-y-0 right-0 pr-3 flex items-center`.
+- **Toggle Button Styles**: `text-slate-400 hover:text-navy dark:hover:text-white transition-colors`
+- **Input Field Adjustment**: Added `pr-10` padding to prevent text overlapping the absolute toggle button.
+
+---
+
+## CMS Form Groups
+- **Files**: `src/pages/admin/*`
+- **Date**: 2026-07-13 (UI Form Fix)
+- **Container Layout**: Use `flex flex-col gap-2` to wrap labels and input fields, ensuring the label sits cleanly above the input box.
+- **Labels**: `text-sm font-medium text-navy dark:text-text-heading-dark`
+- **Inputs**: `w-full px-4 py-2 border rounded-lg bg-white dark:bg-midnight-light border-slate-300 dark:border-slate-700`
+
+---
+
+## Task 1 Database RLS Audit
+- **Location**: Supabase `authorities` & `chapters` tables
+- **Date**: 2026-07-14
+- **Note**: Database-level Role-Based Access Control enforced. No UI components were built or modified in this task, so no visual patterns were extracted.
+
+---
+
+## Task 2 Database Schema Update
+- **Location**: Supabase `chapters` table
+- **Date**: 2026-07-14
+- **Note**: Added `is_published` and `published_at` columns. No UI visual patterns were modified.
+
+---
+
+## Task 3 Frontend Editor Fix
+- **File**: `src/components/admin/RichTextEditor.tsx`
+- **Date**: 2026-07-14
+- **Note**: Moved Tiptap `extensions` array outside the component scope to ensure referential stability and prevent duplicate extension registration under React 18 Strict Mode. No visual UI patterns were altered.
+
+---
+
+## Task 4 Frontend CSS Specificity Fix
+- **File**: `src/index.css`
+- **Date**: 2026-07-14
+- **Note**: Wrapped standard HTML base styles inside `@layer base { ... }`. This prevents raw CSS styles from erroneously overriding Tailwind utility classes (like `text-white`) by ensuring the correct precedence layer in Tailwind v4. No visual UI patterns were changed.
+
+---
+
+## Admin Config Refactor (ChapterEditorPage & AdminShell)
+- **Files**: `src/lib/config.ts`, `src/pages/admin/ChapterEditorPage.tsx`, `src/components/admin/AdminShell.tsx`
+- **Date**: 2026-07-14
+- **Note**: Extracted hardcoded email credentials from ChapterEditorPage and AdminShell into a central configuration file (`config.ts`). Verified that all read and write database operations continue to rely strictly on server-enforced RLS policies rather than client-side checks. No visual UI styles were modified.
+
+---
+
+## ChapterEditorPage SortOrder Input Fix
+- **File**: `src/pages/admin/ChapterEditorPage.tsx`
+- **Date**: 2026-07-14
+- **Note**: Updated the `sortOrder` state and onChange handler to allow empty string values `""` instead of NaN when the input field is cleared. Enforced radix 10 `parseInt(val, 10)` for parsing non-empty inputs. Updated save mapper to parse string representations with fallback value `0` when saving. No visual UI styles were modified.
+
+---
+
+## AdminLoginPage Location State Typing Fix
+- **File**: `src/pages/AdminLoginPage.tsx`
+- **Date**: 2026-07-14
+- **Note**: Created and applied `LocationState` interface to cast `location.state` when accessing route redirection metadata (`from?.pathname`). This corrects TypeScript type compilation issues where `location.state` defaults to `unknown` in React Router v6. Preserved fallback route behavior. No visual UI styles were modified.
+
+---
+
+## Super Admin Role-based Router & Navigation Protection
+- **Files**: `src/App.tsx`, `src/components/admin/AdminShell.tsx`, `src/components/admin/SuperAdminRoute.tsx`, `src/pages/admin/ChapterEditorPage.tsx`
+- **Date**: 2026-07-14
+- **Note**: Replaced hardcoded email identity checks with a standard role-based client-side check (`isSuperAdminRole`) that checks app/user metadata before falling back to email config. Created `SuperAdminRoute` route guard component and wrapped the chapters editor route with it in `App.tsx` to strictly prevent direct URL navigation to chapter modification pages for non-super admins. No visual UI styles were modified.
+
+---
+
+## AuthorityEditorPage Form Submission Refactor
+- **File**: `src/pages/admin/AuthorityEditorPage.tsx`
+- **Date**: 2026-07-14
+- **Note**: Refactored the form submission model to use standard HTML5 forms and submit buttons (leveraging `form="authority-form"` and `type="submit"` outside the `<form>` wrapper). Added `data-publish` attributes to buttons, which are explicitly read on form submit event via `nativeEvent.submitter` to determine draft vs publish intent. This leverages browser native validation and avoids reliance on React state synchronization, resolving stale state bugs. No visual UI styles were modified.
+
+---
+
+## Trusted app_metadata Role Authorization
+- **Files**: `src/lib/config.ts`
+- **Date**: 2026-07-14
+- **Note**: Refactored `getAdminRole` function to derive role-based authorization exclusively from `user.app_metadata.role` (which is server-set and secure), removing checks on the client-controlled `user.user_metadata.role`. The trusted fallback to email-based config is retained. Audited and updated the live database RLS policies on `chapters` and `authorities` to support both `auth.jwt() -> 'app_metadata' ->> 'role'` checking and the trusted `email` fallback, securing mutation access at the server level. No visual UI styles were changed.

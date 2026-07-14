@@ -45,7 +45,8 @@ To guarantee strong discoverability and professional sharing capabilities:
 *   Simultaneously scans both the core book and all downloaded authorities.
 *   Segregates search results contextually (e.g., "Matches in Core Book" vs. "Matches in Authorities") to prevent user confusion.
 
-### 5.5 Admin CMS Dashboard
+### 5.5 Admin CMS Dashboard (Phase 6)
 *   A secure, desktop-optimized web portal for the author/administrator.
-*   Features a Rich Text / Markdown editor (e.g., TipTap or React Quill) allowing the admin to format and publish new legal updates with standard word-processing tools (Bold, Italic, H1, H2, Blockquotes).
+*   Features a Rich Text / Markdown editor (TipTap) allowing the admin to format and publish new legal updates with standard word-processing tools (Bold, Italic, H1, H2, Blockquotes, Links, Superscript).
 *   Data must be saved as raw text strings to maintain a lightweight database footprint.
+*   **Architectural Decision - Chapter Management:** Although the core book was originally intended to be seeded entirely via raw SQL, we have chosen to retain the "Chapter CRUD" flow within the Admin CMS. This streamlines the manual uploading process of the core book and allows the admin to update existing chapters without executing SQL directly.

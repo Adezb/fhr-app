@@ -52,37 +52,39 @@
 /* --------------------------------------------
    Base Styles
    -------------------------------------------- */
-html {
-  scroll-behavior: smooth;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  margin: 0;
-  color: var(--color-text-body);
-  background-color: var(--color-surface);
+  body {
+    margin: 0;
+    color: var(--color-text-body);
+    background-color: var(--color-surface);
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-/* Dark mode base overrides */
-.dark body,
-body:where(.dark *) {
-  color: var(--color-text-body-dark);
-  background-color: var(--color-midnight);
-}
+  /* Dark mode base overrides */
+  .dark body,
+  body:where(.dark *) {
+    color: var(--color-text-body-dark);
+    background-color: var(--color-midnight);
+  }
 
-/* --------------------------------------------
-   Heading Defaults
-   -------------------------------------------- */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--color-text-heading);
-}
+  /* --------------------------------------------
+     Heading Defaults
+     -------------------------------------------- */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-text-heading);
+  }
 
-.dark h1, .dark h2, .dark h3,
-.dark h4, .dark h5, .dark h6 {
-  color: var(--color-text-heading-dark);
+  .dark h1, .dark h2, .dark h3,
+  .dark h4, .dark h5, .dark h6 {
+    color: var(--color-text-heading-dark);
+  }
 }
 
 

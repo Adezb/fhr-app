@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import HomePage from './pages/HomePage';
 import TableOfContentsPage from './pages/TableOfContentsPage';
@@ -8,6 +8,12 @@ import AuthoritiesHubPage from './pages/AuthoritiesHubPage';
 import AuthorityPage from './pages/AuthorityPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import ProtectedRoute from './components/admin/ProtectedRoute';
+import AdminShell from './components/admin/AdminShell';
+import ChapterEditorPage from './pages/admin/ChapterEditorPage';
+import AuthorityEditorPage from './pages/admin/AuthorityEditorPage';
+import AdminMobileGuard from './components/admin/AdminMobileGuard';
+import SuperAdminRoute from './components/admin/SuperAdminRoute';
 import { isMobileOrTabletDevice } from './utils/device';
 
 function App() {
@@ -38,9 +44,21 @@ function App() {
           <Route path="authorities/:slug" element={<AuthorityPage />} />
         </Route>
         
-        {/* Admin Routes (Standalone or using a different layout later) */}
-        <Route path="/admin" element={<AdminLoginPage />} />
-        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+        {/* Admin CMS Routes */}
+        <Route element={<AdminMobileGuard />}>
+          <Route path="/admin-cms/login" element={<AdminLoginPage />} />
+          
+          <Route path="/admin-cms" element={<ProtectedRoute />}>
+            <Route element={<AdminShell />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboardPage />} />
+              <Route element={<SuperAdminRoute />}>
+                <Route path="chapters/:id" element={<ChapterEditorPage />} />
+              </Route>
+              <Route path="authorities/:id" element={<AuthorityEditorPage />} />
+            </Route>
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

@@ -29,3 +29,11 @@ CREATE POLICY "Public can read published authorities" ON authorities FOR SELECT 
 
 CREATE POLICY "Authenticated users can manage chapters" ON chapters FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Authenticated users can manage authorities" ON authorities FOR ALL USING (auth.role() = 'authenticated');
+
+-- Grant DML privileges to authenticated role
+GRANT INSERT, UPDATE, DELETE ON chapters TO authenticated;
+GRANT INSERT, UPDATE, DELETE ON authorities TO authenticated;
+
+-- Ensure service_role has full access (Supabase standard)
+GRANT ALL ON chapters TO service_role;
+GRANT ALL ON authorities TO service_role;

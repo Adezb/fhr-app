@@ -368,3 +368,17 @@ All future components must match these established patterns for consistency.
 - **File**: `vercel.json`
 - **Date**: 2026-07-14
 - **Note**: Created a `vercel.json` file in the root directory containing routing rewrite rules mapping all wildcard paths (`/(.*)`) back to `index.html`. This enables React Router to handle client-side routing on direct URL access in production deployments, preventing Vercel from returning 404 errors. No visual UI styles were changed.
+
+---
+
+## RichTextEditor Block Formatting & Typography Fix (Task 2 & Task 3)
+- **File**: `src/components/admin/RichTextEditor.tsx`
+- **Date**: 2026-07-14
+- **Note**: Wrapped the TipTap `EditorContent` component with a `div` containing Tailwind CSS typography classes (`prose prose-sm sm:prose-base dark:prose-invert max-w-none focus:outline-none`) along with custom heading, link, and blockquote styles. Cleaned up conflicting duplicate prose classes in `editorProps.attributes`. Audited and verified `TextAlign` configuration to recognize all `heading` and `paragraph` blocks explicitly.
+
+---
+
+## RichTextEditor Horizontal Rule Button Addition
+- **File**: `src/components/admin/RichTextEditor.tsx`
+- **Date**: 2026-07-14
+- **Note**: Imported `Minus` icon from `lucide-react` and added a new Horizontal Rule button to the toolbar right after the text alignment tools. Clicking the button calls `editor.chain().focus().setHorizontalRule().run()`. Set `isActive` state check to `editor.isActive('horizontalRule')`.

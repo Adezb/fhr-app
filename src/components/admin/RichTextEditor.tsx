@@ -4,7 +4,8 @@ import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
-import Superscript from '@tiptap/extension-superscript'
+import Superscript from '@tiptap/extension-superscript';
+import { Minus } from 'lucide-react';
 
 interface RichTextEditorProps {
   contentHtml: string;
@@ -36,8 +37,7 @@ export default function RichTextEditor({ contentHtml, onChange }: RichTextEditor
     },
     editorProps: {
       attributes: {
-        // We match the public ReaderView's prose classes for 1:1 fidelity
-        class: 'prose prose-base md:prose-lg dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-a:text-gold dark:prose-a:text-gold-light prose-blockquote:border-l-gold focus:outline-none min-h-[500px] p-6',
+        class: 'min-h-[500px] p-6 focus:outline-none',
       },
     },
   });
@@ -146,6 +146,13 @@ export default function RichTextEditor({ contentHtml, onChange }: RichTextEditor
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
         </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          isActive={editor.isActive('horizontalRule')}
+          title="Horizontal Rule"
+        >
+          <Minus size={16} />
+        </ToolbarButton>
 
         <div className="w-px h-6 bg-slate-300 dark:bg-slate-600 mx-1"></div>
 
@@ -197,7 +204,9 @@ export default function RichTextEditor({ contentHtml, onChange }: RichTextEditor
         </ToolbarButton>
       </div>
 
-      <EditorContent editor={editor} />
+      <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none focus:outline-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-a:text-gold dark:prose-a:text-gold-light prose-blockquote:border-l-gold">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }

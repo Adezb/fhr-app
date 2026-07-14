@@ -4,12 +4,15 @@ import { supabase } from '../../lib/supabase';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 import { useAuth } from '../../hooks/useAuth';
 import { isSuperAdminRole } from '../../lib/config';
+import { X, Save, Rocket } from 'lucide-react';
 
 export default function ChapterEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const isNew = id === 'new';
+
+  const generateSlug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -92,7 +95,7 @@ export default function ChapterEditorPage() {
 
   return (
     <div className="max-w-4xl mx-auto pb-12">
-      <div className="flex items-center justify-between mb-6">
+      <div className="sticky top-0 z-30 flex justify-between items-center py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 mb-6">
         <h1 className="text-2xl font-bold text-navy dark:text-text-heading-dark">
           {isNew ? 'New Chapter' : 'Edit Chapter'}
         </h1>
@@ -100,28 +103,33 @@ export default function ChapterEditorPage() {
           <button 
             type="button" 
             onClick={() => navigate('/admin-cms/dashboard')}
-            className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 flex items-center gap-2"
           >
+            <X size={16} />
             Cancel
           </button>
           <button 
             type="button"
             onClick={() => handleSave(false)}
             disabled={isSaving}
-            className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white font-medium rounded-lg transition-colors disabled:opacity-70"
+            className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white font-medium rounded-lg transition-colors disabled:opacity-70 flex items-center gap-2"
           >
+            <Save size={16} />
             Save Draft
           </button>
           <button 
             type="button"
             onClick={() => handleSave(true)}
             disabled={isSaving}
-            className="px-6 py-2 bg-navy hover:bg-navy-light text-white font-medium rounded-lg transition-colors flex items-center justify-center min-w-[120px] disabled:opacity-70"
+            className="px-6 py-2 bg-navy hover:bg-navy-light text-white font-medium rounded-lg transition-colors flex items-center justify-center min-w-[120px] disabled:opacity-70 gap-2"
           >
             {isSaving ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
-              'Publish to App'
+              <>
+                <Rocket size={16} />
+                Publish to App
+              </>
             )}
           </button>
         </div>
@@ -133,7 +141,11 @@ export default function ChapterEditorPage() {
             <label className="text-sm font-medium text-navy dark:text-text-heading-dark">Title</label>
             <input 
               type="text" required
-              value={title} onChange={e => setTitle(e.target.value)}
+              value={title} onChange={e => {
+                const val = e.target.value;
+                setTitle(val);
+                setSlug(generateSlug(val));
+              }}
               className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-midnight-light border-slate-300 dark:border-slate-700"
             />
           </div>

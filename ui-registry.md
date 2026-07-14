@@ -389,3 +389,17 @@ All future components must match these established patterns for consistency.
 - **File**: `src/pages/AdminDashboardPage.tsx`
 - **Date**: 2026-07-14
 - **Note**: Imported `useAuth` hook and created `isSuperAdmin` check to verify if the user's email is `cektopventures@gmail.com` case-insensitively. Restricted access to Chapter management controls on the dashboard: the "Manage Chapter" button and the Chapters table "Actions" column (Edit and Delete actions) are now hidden entirely for non-super admins. Authorities table controls remain unchanged.
+
+---
+
+## Auto-Generate Slug from Title (Task 1)
+- **Files**: `src/pages/admin/ChapterEditorPage.tsx`, `src/pages/admin/AuthorityEditorPage.tsx`
+- **Date**: 2026-07-14
+- **Note**: Implemented a `generateSlug` helper function within both `ChapterEditorPage` and `AuthorityEditorPage` components. Wired it into the Title input's `onChange` event handlers to automatically populate and sync the slug state in real-time as the user types.
+
+---
+
+## Sticky Action Header & Action Buttons Icons (Task 2 & Task 3)
+- **Files**: `src/pages/admin/ChapterEditorPage.tsx`, `src/pages/admin/AuthorityEditorPage.tsx`, `src/components/admin/RichTextEditor.tsx`
+- **Date**: 2026-07-14
+- **Note**: Imported `X`, `Save`, and `Rocket` icons from `lucide-react` and added them inside the Cancel, Save Draft, and Publish action buttons inside both `ChapterEditorPage` and `AuthorityEditorPage` using standard flex gap layouts. Wrapped the editor header controls in a sticky wrapper (`sticky top-0 z-30`). Adjusted the `RichTextEditor` sticky toolbar's top offset to `top-[72px]` so that it stacks neatly beneath the editor page's sticky action header without overlapping.

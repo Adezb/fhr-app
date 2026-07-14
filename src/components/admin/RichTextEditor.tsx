@@ -76,7 +76,7 @@ export default function RichTextEditor({ contentHtml, onChange }: RichTextEditor
   return (
     <div className="border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-midnight">
       {/* Sticky Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-slate-50 dark:bg-midnight-light border-b border-slate-300 dark:border-slate-700 sticky top-0 z-10">
+      <div className="flex flex-wrap items-center gap-1 p-2 bg-slate-50 dark:bg-midnight-light border-b border-slate-300 dark:border-slate-700 sticky top-[72px] z-10">
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}

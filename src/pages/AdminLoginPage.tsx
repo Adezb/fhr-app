@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-navy dark:text-text-heading-dark mb-2">CMS Portal</h1>
-          <p className="text-sm text-text-muted dark:text-text-body-dark">Sign in to manage FHR Guide content</p>
+          <p className="text-sm text-text-muted dark:text-text-body-dark">Sign in to manage FHR Practice Guide content</p>
         </div>
 
         {error && (

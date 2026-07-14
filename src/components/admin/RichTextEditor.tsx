@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -10,23 +11,23 @@ interface RichTextEditorProps {
   onChange: (html: string) => void;
 }
 
-const extensions = [
-  StarterKit,
-  Underline,
-  TextAlign.configure({
-    types: ['heading', 'paragraph'],
-    alignments: ['left', 'center', 'right', 'justify'],
-  }),
-  Link.configure({
-    openOnClick: false,
-    HTMLAttributes: {
-      class: 'text-gold dark:text-gold-light hover:underline',
-    },
-  }),
-  Superscript,
-];
-
 export default function RichTextEditor({ contentHtml, onChange }: RichTextEditorProps) {
+  const extensions = useMemo(() => [
+    StarterKit,
+    Underline,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+      alignments: ['left', 'center', 'right', 'justify'],
+    }),
+    Link.configure({
+      openOnClick: false,
+      HTMLAttributes: {
+        class: 'text-gold dark:text-gold-light hover:underline',
+      },
+    }),
+    Superscript,
+  ], []);
+
   const editor = useEditor({
     extensions,
     content: contentHtml,

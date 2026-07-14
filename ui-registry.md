@@ -347,3 +347,24 @@ All future components must match these established patterns for consistency.
 - **Files**: `src/lib/config.ts`
 - **Date**: 2026-07-14
 - **Note**: Refactored `getAdminRole` function to derive role-based authorization exclusively from `user.app_metadata.role` (which is server-set and secure), removing checks on the client-controlled `user.user_metadata.role`. The trusted fallback to email-based config is retained. Audited and updated the live database RLS policies on `chapters` and `authorities` to support both `auth.jwt() -> 'app_metadata' ->> 'role'` checking and the trusted `email` fallback, securing mutation access at the server level. No visual UI styles were changed.
+
+---
+
+## Tiptap Dependency Synchronization
+- **File**: `package.json`, `package-lock.json`
+- **Date**: 2026-07-14
+- **Note**: Synchronized all `@tiptap/*` dependency versions in `package.json` to exactly `^3.27.4` to fix ERESOLVE peer conflicts during deployment. Added `@tiptap/core` explicitly to lock it to the matching version. Resolved the dependency tree and generated a clean lockfile using `npm install --legacy-peer-deps`. No visual UI styles were changed.
+
+---
+
+## Tiptap Duplicate Extension Fix (useMemo Refactor)
+- **File**: `src/components/admin/RichTextEditor.tsx`
+- **Date**: 2026-07-14
+- **Note**: Refactored the TipTap `extensions` array configuration. Defined the array inside `useMemo(() => [ ... ], [])` inside the component. This ensures that new extension instances are cleanly created only when the component actually mounts (avoiding the global sharing of stateful extension instances that triggered warnings during React 18 Strict Mode double-mounts), while still preserving referential stability across keystroke re-renders to prevent cursor loss/jumping. No visual UI styles were changed.
+
+---
+
+## Vercel SPA Routing Config
+- **File**: `vercel.json`
+- **Date**: 2026-07-14
+- **Note**: Created a `vercel.json` file in the root directory containing routing rewrite rules mapping all wildcard paths (`/(.*)`) back to `index.html`. This enables React Router to handle client-side routing on direct URL access in production deployments, preventing Vercel from returning 404 errors. No visual UI styles were changed.

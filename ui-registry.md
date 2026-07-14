@@ -403,3 +403,23 @@ All future components must match these established patterns for consistency.
 - **Files**: `src/pages/admin/ChapterEditorPage.tsx`, `src/pages/admin/AuthorityEditorPage.tsx`, `src/components/admin/RichTextEditor.tsx`
 - **Date**: 2026-07-14
 - **Note**: Imported `X`, `Save`, and `Rocket` icons from `lucide-react` and added them inside the Cancel, Save Draft, and Publish action buttons inside both `ChapterEditorPage` and `AuthorityEditorPage` using standard flex gap layouts. Wrapped the editor header controls in a sticky wrapper (`sticky top-0 z-30`). Adjusted the `RichTextEditor` sticky toolbar's top offset to `top-[72px]` so that it stacks neatly beneath the editor page's sticky action header without overlapping.
+
+---
+
+## Chapters Publication Status Securitization
+- **Files**: `src/lib/sync.ts`, `src/pages/TableOfContentsPage.tsx`, `src/pages/ChapterPage.tsx`, `src/lib/search.ts`, `src/types/index.ts`
+- **Date**: 2026-07-14
+- **Note**: Restricted public read access to chapters strictly to published ones (`is_published = true`). Fixed this by updating the database Row-Level Security (RLS) policy `Public read chapters` and modifying the sync fetch query. Also added frontend safeguards: `Chapter` TypeScript interface was aligned with the database; Table of Contents, Chapter reader page, and the search indexing service were updated to filter out unpublished/draft chapters from local IndexedDB cache. No visual UI styles were modified.
+
+---
+
+## ReloadPrompt (PWA Update Available Prompt)
+- **File**: `src/components/pwa/ReloadPrompt.tsx`
+- **Date**: 2026-07-14
+- **Background**: `bg-white dark:bg-midnight`
+- **Text Colors**: Message `text-navy dark:text-text-heading-dark`, Dismiss `text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200`
+- **Primary Button**: `bg-gold text-navy hover:bg-gold-light font-bold`
+- **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl`
+- **Spacing/Positioning**: `fixed bottom-20 md:bottom-4 right-4 z-[100] max-w-md p-4 flex flex-col sm:flex-row items-center gap-4`
+- **Animation**: `transition-all duration-300 animate-in fade-in slide-in-from-bottom-5`
+- **UX Details**: Standard PWA update banner. Height offsets on mobile screen sizes (`bottom-20`) to clear the mobile bottom nav bar, and sits at `bottom-4` on desktop/tablet views. Features a "Reload" action that triggers immediate service worker updating and page refresh, and a "Dismiss" link to dismiss the notification.

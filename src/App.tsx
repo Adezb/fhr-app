@@ -15,6 +15,7 @@ import AuthorityEditorPage from './pages/admin/AuthorityEditorPage';
 import AdminMobileGuard from './components/admin/AdminMobileGuard';
 import SuperAdminRoute from './components/admin/SuperAdminRoute';
 import { isMobileOrTabletDevice } from './utils/device';
+import ReloadPrompt from './components/pwa/ReloadPrompt';
 
 function App() {
   useEffect(() => {
@@ -60,6 +61,7 @@ function App() {
           </Route>
         </Route>
       </Routes>
+      <ReloadPrompt />
     </BrowserRouter>
   );
 }

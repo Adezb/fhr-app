@@ -15,7 +15,7 @@ export default defineConfig({
        * Handles registration, updates, and lifecycle automatically.
        */
       strategies: 'generateSW',
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       injectRegister: 'auto',
 
       /**

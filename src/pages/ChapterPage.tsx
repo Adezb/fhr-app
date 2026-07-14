@@ -31,8 +31,8 @@ export default function ChapterPage() {
         
         // Find current chapter
         const current = await db.getFromIndex('chapters', 'by-slug', slug);
-        if (!current) {
-          // Fallback to TOC if chapter doesn't exist
+        if (!current || !current.is_published) {
+          // Fallback to TOC if chapter doesn't exist or is not published
           navigate('/book');
           return;
         }
@@ -40,7 +40,7 @@ export default function ChapterPage() {
 
         // Fetch all chapters to determine prev/next efficiently
         // Since a book has <100 chapters, this is very fast client-side
-        const allChapters = await db.getAllFromIndex('chapters', 'by-sort-order');
+        const allChapters = (await db.getAllFromIndex('chapters', 'by-sort-order')).filter(c => c.is_published);
         const currentIndex = allChapters.findIndex(c => c.id === current.id);
         
         if (currentIndex > 0) {
@@ -49,7 +49,7 @@ export default function ChapterPage() {
           setPrevChapter(null);
         }
         
-        if (currentIndex < allChapters.length - 1) {
+        if (currentIndex > -1 && currentIndex < allChapters.length - 1) {
           setNextChapter(allChapters[currentIndex + 1]);
         } else {
           setNextChapter(null);

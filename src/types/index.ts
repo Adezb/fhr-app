@@ -5,6 +5,8 @@ export interface Chapter {
   slug: string;
   content_html: string;
   summary: string | null;
+  is_published: boolean;
+  published_at: string | null; // ISO timestamp
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
 }

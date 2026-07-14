@@ -17,7 +17,11 @@ export async function performSync(): Promise<void> {
   const now = new Date().toISOString();
   
   // 1. Sync Chapters (Delta Query)
-  let chaptersQuery = supabase.from('chapters').select('*');
+  let chaptersQuery = supabase
+    .from('chapters')
+    .select('*')
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true });
   if (lastSync) {
     chaptersQuery = chaptersQuery.gt('updated_at', lastSync);
   }

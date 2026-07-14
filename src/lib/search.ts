@@ -95,7 +95,7 @@ const contentCache = new Map<string, string>();
  */
 export async function buildBookIndex(): Promise<MiniSearch> {
   const db = await getDB();
-  const chapters = await db.getAll('chapters');
+  const chapters = (await db.getAll('chapters')).filter(c => c.is_published);
 
   bookIndex = new MiniSearch<Chapter>({
     fields: ['title', 'plaintext'],       // Fields to index for full-text search

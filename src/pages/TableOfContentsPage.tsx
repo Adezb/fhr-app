@@ -12,7 +12,7 @@ export default function TableOfContentsPage() {
       try {
         const db = await getDB();
         const allChapters = await db.getAllFromIndex('chapters', 'by-sort-order');
-        setChapters(allChapters);
+        setChapters(allChapters.filter(c => c.is_published));
       } catch (error) {
         console.error("Failed to load chapters:", error);
       } finally {

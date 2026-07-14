@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { Chapter, Authority } from '../types';
+import { useAuth } from '../hooks/useAuth';
 
 export default function AdminDashboardPage() {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.email?.toLowerCase() === 'cektopventures@gmail.com';
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [authorities, setAuthorities] = useState<Authority[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,12 +62,14 @@ export default function AdminDashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-navy dark:text-text-heading-dark">Chapters</h2>
-          <Link
-            to="/admin-cms/chapters/new"
-            className="px-4 py-2 bg-navy hover:bg-navy-light text-white text-sm font-medium rounded-lg transition-colors"
-          >
-            Manage Chapter
-          </Link>
+          {isSuperAdmin && (
+            <Link
+              to="/admin-cms/chapters/new"
+              className="px-4 py-2 bg-navy hover:bg-navy-light text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Manage Chapter
+            </Link>
+          )}
         </div>
         
         <div className="bg-white dark:bg-midnight-light rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
@@ -73,7 +78,7 @@ export default function AdminDashboardPage() {
               <tr>
                 <th className="px-4 py-3 font-medium">Order</th>
                 <th className="px-4 py-3 font-medium">Title</th>
-                <th className="px-4 py-3 font-medium text-right">Actions</th>
+                {isSuperAdmin && <th className="px-4 py-3 font-medium text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -81,15 +86,17 @@ export default function AdminDashboardPage() {
                 <tr key={chapter.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{chapter.sort_order}</td>
                   <td className="px-4 py-3 font-medium text-navy dark:text-text-heading-dark">{chapter.title}</td>
-                  <td className="px-4 py-3 text-right space-x-3">
-                    <Link to={`/admin-cms/chapters/${chapter.id}`} className="text-gold hover:text-gold-light font-medium">Edit</Link>
-                    <button onClick={() => deleteChapter(chapter.id)} className="text-red-500 hover:text-red-400 font-medium">Delete</button>
-                  </td>
+                  {isSuperAdmin && (
+                    <td className="px-4 py-3 text-right space-x-3">
+                      <Link to={`/admin-cms/chapters/${chapter.id}`} className="text-gold hover:text-gold-light font-medium">Edit</Link>
+                      <button onClick={() => deleteChapter(chapter.id)} className="text-red-500 hover:text-red-400 font-medium">Delete</button>
+                    </td>
+                  )}
                 </tr>
               ))}
               {chapters.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-4 py-8 text-center text-slate-500">No chapters found.</td>
+                  <td colSpan={isSuperAdmin ? 3 : 2} className="px-4 py-8 text-center text-slate-500">No chapters found.</td>
                 </tr>
               )}
             </tbody>

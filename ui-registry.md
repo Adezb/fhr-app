@@ -382,3 +382,10 @@ All future components must match these established patterns for consistency.
 - **File**: `src/components/admin/RichTextEditor.tsx`
 - **Date**: 2026-07-14
 - **Note**: Imported `Minus` icon from `lucide-react` and added a new Horizontal Rule button to the toolbar right after the text alignment tools. Clicking the button calls `editor.chain().focus().setHorizontalRule().run()`. Set `isActive` state check to `editor.isActive('horizontalRule')`.
+
+---
+
+## Admin Dashboard Page RBAC UI Restrictions
+- **File**: `src/pages/AdminDashboardPage.tsx`
+- **Date**: 2026-07-14
+- **Note**: Imported `useAuth` hook and created `isSuperAdmin` check to verify if the user's email is `cektopventures@gmail.com` case-insensitively. Restricted access to Chapter management controls on the dashboard: the "Manage Chapter" button and the Chapters table "Actions" column (Edit and Delete actions) are now hidden entirely for non-super admins. Authorities table controls remain unchanged.

@@ -80,9 +80,12 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
         mark.appendChild(matchNode);
 
         // Smooth scroll into view slightly delayed to ensure DOM is settled
+        // Increased to 400ms for mobile devices and aligned with browser compositor frames
         scrollTimeoutId = setTimeout(() => {
-          mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+          requestAnimationFrame(() => {
+            mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          });
+        }, 400);
 
         // 2500ms fade-out effect by stripping the active colors
         fadeTimerRef.current = setTimeout(() => {

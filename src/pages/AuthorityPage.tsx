@@ -19,6 +19,8 @@ export default function AuthorityPage() {
       if (!slug) return;
       
       setIsLoading(true);
+      // Reset scroll position instantly to 0 as soon as navigation starts to clear previous page state
+      window.scrollTo({ top: 0, behavior: 'instant' });
       try {
         const db = await getDB();
         

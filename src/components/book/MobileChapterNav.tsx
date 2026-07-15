@@ -11,6 +11,7 @@ interface MobileChapterNavProps {
   currentTitle: string;
   prevChapter: ChapterNavInfo | null;
   nextChapter: ChapterNavInfo | null;
+  isScrollSuspended?: boolean;
 }
 
 /**
@@ -24,8 +25,9 @@ export default function MobileChapterNav({
   currentTitle,
   prevChapter,
   nextChapter,
+  isScrollSuspended = false,
 }: MobileChapterNavProps) {
-  const scrollDirection = useScrollDirection();
+  const scrollDirection = useScrollDirection(isScrollSuspended);
   const isHidden = scrollDirection === 'down';
 
   return (

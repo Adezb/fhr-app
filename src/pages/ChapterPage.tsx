@@ -13,6 +13,8 @@ export default function ChapterPage() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const highlightQuery = searchParams.get('q') || undefined;
+  const hasQuery = !!highlightQuery;
+  const [isScrollSuspended, setIsScrollSuspended] = useState(hasQuery);
   
   const { saveProgress } = useReadingProgress();
   
@@ -23,10 +25,24 @@ export default function ChapterPage() {
   const isRestoringScroll = useRef(false);
 
   useEffect(() => {
+    if (hasQuery) {
+      setIsScrollSuspended(true);
+      const timer = setTimeout(() => {
+        setIsScrollSuspended(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    } else {
+      setIsScrollSuspended(false);
+    }
+  }, [slug, highlightQuery, hasQuery]);
+
+  useEffect(() => {
     async function loadChapter() {
       if (!slug) return;
       
       setIsLoading(true);
+      // Reset scroll position instantly to 0 as soon as navigation starts to clear previous page state
+      window.scrollTo({ top: 0, behavior: 'instant' });
       try {
         const db = await getDB();
         
@@ -56,7 +72,7 @@ export default function ChapterPage() {
           setNextChapter(null);
         }
         
-        // Auto scroll to top when chapter changes, unless we are highlighting a search result
+        // Auto scroll to top/restore when chapter changes, unless we are highlighting a search result
         if (!searchParams.get('q')) {
           const savedProgressStr = localStorage.getItem('fhr_reading_progress');
           let shouldRestore = false;
@@ -179,12 +195,14 @@ export default function ChapterPage() {
         currentTitle={chapter.title}
         prevChapter={prevChapter}
         nextChapter={nextChapter}
+        isScrollSuspended={isScrollSuspended}
       />
       <ReaderBottomNav 
         prevSlug={prevChapter?.slug || null}
         prevTitle={prevChapter?.title || null}
         nextSlug={nextChapter?.slug || null}
         nextTitle={nextChapter?.title || null}
+        isScrollSuspended={isScrollSuspended}
       />
     </>
   );

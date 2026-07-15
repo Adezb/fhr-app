@@ -1,18 +1,40 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Custom hook to track scroll direction (up or down).
  * Includes a 10px threshold to prevent jitter from small/accidental movements.
  * Near the very top of the page, the direction is forced to 'up' to keep UI visible.
+ * Suspends scroll tracking for 1500ms during search highlights to prevent compositor aborts.
  */
-export function useScrollDirection() {
+export function useScrollDirection(isProgrammaticScrolling = false) {
+  const location = useLocation();
+  const hasQuery = location.search.includes('q=');
+  const [isSuspended, setIsSuspended] = useState(isProgrammaticScrolling || hasQuery);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const lastScrollY = useRef(0);
 
+  // Suspend scroll tracking on route transitions with search queries to allow smooth scroll completion
   useEffect(() => {
+    const shouldSuspend = isProgrammaticScrolling || hasQuery;
+    if (shouldSuspend) {
+      setIsSuspended(true);
+      const timer = setTimeout(() => {
+        setIsSuspended(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    } else {
+      setIsSuspended(false);
+    }
+  }, [location.pathname, location.search, isProgrammaticScrolling, hasQuery]);
+
+  useEffect(() => {
+    if (isSuspended) {
+      setScrollDirection('up');
+      return;
+    }
     const threshold = 10;
     
-    // Set initial scroll Y on mount to avoid large jumps if page is refreshed at scroll position
     lastScrollY.current = window.scrollY;
 
     const handleScroll = () => {
@@ -45,7 +67,7 @@ export function useScrollDirection() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isSuspended]);
 
   return scrollDirection;
 }

@@ -19,6 +19,11 @@ import ReloadPrompt from './components/pwa/ReloadPrompt';
 
 function App() {
   useEffect(() => {
+    // Disable browser's automatic scroll restoration to prevent conflicts with custom scroll/highlight logic
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
     // Global fallback listener for native-menu PWA installations
     const handleAppInstalled = () => {
       if (isMobileOrTabletDevice()) {

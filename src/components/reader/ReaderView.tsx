@@ -29,6 +29,12 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
   useEffect(() => {
     if (!searchQuery || !contentRef.current) return;
 
+    let scrollTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    // Reset scroll position instantly to 0 before highlighting and scrolling to match.
+    // This clears any residual scroll position from previous routes to prevent scrollbar collisions.
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
     const lowerQuery = searchQuery.toLowerCase();
     
     // Create a TreeWalker to safely find Text Nodes containing the query
@@ -74,7 +80,7 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
         mark.appendChild(matchNode);
 
         // Smooth scroll into view slightly delayed to ensure DOM is settled
-        setTimeout(() => {
+        scrollTimeoutId = setTimeout(() => {
           mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
 
@@ -88,6 +94,9 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
 
     return () => {
       cancelAnimationFrame(rafId);
+      if (scrollTimeoutId) {
+        clearTimeout(scrollTimeoutId);
+      }
       // DOM cleanup ONLY — do NOT clearTimeout(fadeTimerRef.current)
       
       // Properly restore the DOM to its original state before unmount or next effect

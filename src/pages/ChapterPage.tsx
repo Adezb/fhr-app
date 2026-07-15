@@ -4,6 +4,7 @@ import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
 import ReaderView from '../components/reader/ReaderView';
 import ReaderBottomNav from '../components/reader/ReaderBottomNav';
+import MobileChapterNav from '../components/book/MobileChapterNav';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 
 export default function ChapterPage() {
@@ -173,6 +174,11 @@ export default function ChapterPage() {
         contentHtml={chapter.content_html} 
         searchQuery={highlightQuery}
         searchKey={location.key}
+      />
+      <MobileChapterNav
+        currentTitle={chapter.title}
+        prevChapter={prevChapter}
+        nextChapter={nextChapter}
       />
       <ReaderBottomNav 
         prevSlug={prevChapter?.slug || null}

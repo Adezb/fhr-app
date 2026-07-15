@@ -423,3 +423,16 @@ All future components must match these established patterns for consistency.
 - **Spacing/Positioning**: `fixed bottom-20 md:bottom-4 right-4 z-[100] max-w-md p-4 flex flex-col sm:flex-row items-center gap-4`
 - **Animation**: `transition-all duration-300 animate-in fade-in slide-in-from-bottom-5`
 - **UX Details**: Standard PWA update banner. Height offsets on mobile screen sizes (`bottom-20`) to clear the mobile bottom nav bar, and sits at `bottom-4` on desktop/tablet views. Features a "Reload" action that triggers immediate service worker updating and page refresh, and a "Dismiss" link to dismiss the notification.
+
+---
+
+## MobileChapterNav (Floating Chapter Navigation)
+- **File**: `src/components/book/MobileChapterNav.tsx`
+- **Date**: 2026-07-15
+- **Background**: `bg-white dark:bg-midnight`
+- **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 shadow-2xl rounded-full`
+- **Text Colors**: Current title `text-slate-700 dark:text-slate-200`, Icons `text-slate-600 dark:text-slate-300 hover:text-navy dark:hover:text-gold-light`
+- **Spacing/Positioning**: `fixed left-1/2 -translate-x-1/2 bottom-20 z-40 w-[90%] max-w-sm px-4 py-3 flex items-center justify-between`
+- **Animation/Scroll Logic**: Uses `useScrollDirection` hook. Scroll DOWN → slides down and fades out (`translate-y-32 opacity-0 pointer-events-none`). Scroll UP or at the top of the page → slides up and becomes fully visible (`translate-y-0 opacity-100`).
+- **Transition**: `transition-all duration-300 ease-in-out`
+- **Details**: Standard mobile chapter switcher (`md:hidden`). Centered current chapter title is truncated (`truncate max-w-[150px] sm:max-w-[200px]`). Previous/next arrows are Lucide `ChevronLeft`/`ChevronRight`. Active directions are wrapped in React Router `<Link>`, and inactive directions are rendered as disabled buttons with `opacity-30 cursor-not-allowed pointer-events-none`.

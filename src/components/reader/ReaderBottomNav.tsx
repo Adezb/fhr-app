@@ -6,7 +6,6 @@ interface NavProps {
   prevTitle: string | null;
   nextSlug: string | null;
   nextTitle: string | null;
-  isScrollSuspended?: boolean;
 }
 
 export default function ReaderBottomNav({
@@ -14,9 +13,8 @@ export default function ReaderBottomNav({
   prevTitle,
   nextSlug,
   nextTitle,
-  isScrollSuspended = false,
 }: NavProps) {
-  const isVisible = useAutoHideNav(isScrollSuspended);
+  const isVisible = useAutoHideNav();
 
   return (
     <div 

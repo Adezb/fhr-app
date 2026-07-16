@@ -428,12 +428,13 @@ All future components must match these established patterns for consistency.
 
 ## MobileChapterNav (Floating Chapter Navigation)
 - **File**: `src/components/book/MobileChapterNav.tsx`
-- **Date**: 2026-07-15
+- **Date**: 2026-07-16
 - **Background**: `bg-white dark:bg-midnight`
 - **Borders/Shadows**: `border border-slate-200 dark:border-slate-800 shadow-2xl rounded-full`
 - **Text Colors**: Current title `text-slate-700 dark:text-slate-200`, Icons `text-slate-600 dark:text-slate-300 hover:text-navy dark:hover:text-gold-light`
 - **Spacing/Positioning**: `fixed left-1/2 -translate-x-1/2 bottom-20 z-40 w-[90%] max-w-sm px-4 py-3 flex items-center justify-between`
 - **Animation/Scroll Logic**: Uses `useScrollDirection` hook. Scroll DOWN → slides down and fades out (`translate-y-32 opacity-0 pointer-events-none`). Scroll UP or at the top of the page → slides up and becomes fully visible (`translate-y-0 opacity-100`).
-- **Scroll Suspension**: Integrates `isScrollSuspended` (defaulting to url search query `q` presence check). Temporarily suspends scroll direction and auto-hide tracking for 1500ms during programmatic scroll transitions to prevent layout shifts from aborting the mobile WebKit/Blink compositor thread scroll.
+- **Global Scroll Muting**: Both `useScrollDirection` and `useAutoHideNav` hooks check `document.body.dataset.isAutoScrolling` at the top of their scroll handlers. When set to `'true'` (by `ReaderView` during programmatic search highlight scrolls), all scroll tracking is bypassed — nav bars remain static and no CSS transitions fire, preventing compositor thread conflicts on mobile. The flag is cleared by `ReaderView` when the scroll completes (via `scrollend` event or 200ms scroll-idle fallback).
 - **Transition**: `transition-all duration-300 ease-in-out`
 - **Details**: Standard mobile chapter switcher (`md:hidden`). Centered current chapter title is truncated (`truncate max-w-[150px] sm:max-w-[200px]`). Previous/next arrows are Lucide `ChevronLeft`/`ChevronRight`. Active directions are wrapped in React Router `<Link>`, and inactive directions are rendered as disabled buttons with `opacity-30 cursor-not-allowed pointer-events-none`.
+

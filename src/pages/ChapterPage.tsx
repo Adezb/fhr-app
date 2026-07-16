@@ -13,8 +13,6 @@ export default function ChapterPage() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const highlightQuery = searchParams.get('q') || undefined;
-  const hasQuery = !!highlightQuery;
-  const [isScrollSuspended, setIsScrollSuspended] = useState(hasQuery);
   
   const { saveProgress } = useReadingProgress();
   
@@ -23,18 +21,6 @@ export default function ChapterPage() {
   const [nextChapter, setNextChapter] = useState<Chapter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const isRestoringScroll = useRef(false);
-
-  useEffect(() => {
-    if (hasQuery) {
-      setIsScrollSuspended(true);
-      const timer = setTimeout(() => {
-        setIsScrollSuspended(false);
-      }, 1500);
-      return () => clearTimeout(timer);
-    } else {
-      setIsScrollSuspended(false);
-    }
-  }, [slug, highlightQuery, hasQuery]);
 
   useEffect(() => {
     async function loadChapter() {
@@ -195,14 +181,12 @@ export default function ChapterPage() {
         currentTitle={chapter.title}
         prevChapter={prevChapter}
         nextChapter={nextChapter}
-        isScrollSuspended={isScrollSuspended}
       />
       <ReaderBottomNav 
         prevSlug={prevChapter?.slug || null}
         prevTitle={prevChapter?.title || null}
         nextSlug={nextChapter?.slug || null}
         nextTitle={nextChapter?.title || null}
-        isScrollSuspended={isScrollSuspended}
       />
     </>
   );

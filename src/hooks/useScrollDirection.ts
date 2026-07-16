@@ -1,43 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 
 /**
  * Custom hook to track scroll direction (up or down).
  * Includes a 10px threshold to prevent jitter from small/accidental movements.
  * Near the very top of the page, the direction is forced to 'up' to keep UI visible.
- * Suspends scroll tracking for 1500ms during search highlights to prevent compositor aborts.
+ *
+ * Global muting: If `document.body.dataset.isAutoScrolling` is 'true',
+ * scroll events are ignored to prevent CSS transitions from aborting
+ * programmatic scrollIntoView animations.
  */
-export function useScrollDirection(isProgrammaticScrolling = false) {
-  const location = useLocation();
-  const hasQuery = location.search.includes('q=');
-  const [isSuspended, setIsSuspended] = useState(isProgrammaticScrolling || hasQuery);
+export function useScrollDirection() {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const lastScrollY = useRef(0);
 
-  // Suspend scroll tracking on route transitions with search queries to allow smooth scroll completion
   useEffect(() => {
-    const shouldSuspend = isProgrammaticScrolling || hasQuery;
-    if (shouldSuspend) {
-      setIsSuspended(true);
-      const timer = setTimeout(() => {
-        setIsSuspended(false);
-      }, 1500);
-      return () => clearTimeout(timer);
-    } else {
-      setIsSuspended(false);
-    }
-  }, [location.pathname, location.search, isProgrammaticScrolling, hasQuery]);
-
-  useEffect(() => {
-    if (isSuspended) {
-      setScrollDirection('up');
-      return;
-    }
     const threshold = 10;
-    
+
     lastScrollY.current = window.scrollY;
 
     const handleScroll = () => {
+      // Global mute guard — ReaderView sets this during programmatic scrolls
+      if (document.body.dataset.isAutoScrolling === 'true') return;
+
       const currentScrollY = window.scrollY;
 
       // Always force 'up' at the very top of the page to ensure navbar is visible
@@ -67,7 +51,7 @@ export function useScrollDirection(isProgrammaticScrolling = false) {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [isSuspended]);
+  }, []);
 
   return scrollDirection;
 }

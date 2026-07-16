@@ -16,6 +16,14 @@ interface ReaderViewProps {
   searchKey?: string;
 }
 
+/**
+ * Clears the global auto-scroll muting flag on `document.body`.
+ * Called when the smooth scroll has physically finished.
+ */
+function clearAutoScrollFlag() {
+  delete document.body.dataset.isAutoScrolling;
+}
+
 export default function ReaderView({ title, contentHtml, searchQuery, searchKey }: ReaderViewProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -26,83 +34,135 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
     setIsMounted(true);
   }, []);
 
+  // Search highlight + auto-scroll effect
+  // Architecture: ResizeObserver (paint signal) → dataset muting → scrollIntoView → scrollend (completion signal)
   useEffect(() => {
     if (!searchQuery || !contentRef.current) return;
 
-    let scrollTimeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    // Reset scroll position instantly to 0 before highlighting and scrolling to match.
-    // This clears any residual scroll position from previous routes to prevent scrollbar collisions.
-    window.scrollTo({ top: 0, behavior: 'instant' });
-
     const lowerQuery = searchQuery.toLowerCase();
-    
-    // Create a TreeWalker to safely find Text Nodes containing the query
-    // Wrap in a double requestAnimationFrame to ensure the DOM is fully painted
-    // before we try to walk it and measure for scrolling.
-    const rafId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (!contentRef.current) return;
+    let observer: ResizeObserver | null = null;
+    let scrollEndCleanup: (() => void) | null = null;
 
-        const treeWalker = document.createTreeWalker(
-          contentRef.current,
-          NodeFilter.SHOW_TEXT,
-          {
-            acceptNode: (node) => {
-              if (node.nodeValue?.toLowerCase().includes(lowerQuery)) {
-                // Ignore text nodes already inside a mark (to prevent nested highlights)
-                if (node.parentElement?.tagName === 'MARK') return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-              }
-              return NodeFilter.FILTER_REJECT;
+    // Use a ResizeObserver on the content div to detect when the browser has
+    // finished laying out the full chapter HTML. The observer callback fires
+    // after layout and before paint — a reliable signal that the DOM is stable.
+    observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry || !contentRef.current) return;
+
+      // Wait for the content to have meaningful height (i.e., it has been laid out)
+      if (entry.contentRect.height < 100) return;
+
+      // Layout is stable — disconnect immediately (one-shot)
+      observer?.disconnect();
+      observer = null;
+
+      // Walk the DOM to find and highlight the search match
+      const treeWalker = document.createTreeWalker(
+        contentRef.current,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            if (node.nodeValue?.toLowerCase().includes(lowerQuery)) {
+              // Ignore text nodes already inside a mark (to prevent nested highlights)
+              if (node.parentElement?.tagName === 'MARK') return NodeFilter.FILTER_REJECT;
+              return NodeFilter.FILTER_ACCEPT;
             }
+            return NodeFilter.FILTER_REJECT;
           }
-        );
+        }
+      );
 
-        const firstNode = treeWalker.nextNode() as Text;
-        if (!firstNode) return;
+      const firstNode = treeWalker.nextNode() as Text;
+      if (!firstNode) return;
 
-        // Found a text node containing the exact query. Split it safely.
-        const matchIndex = firstNode.nodeValue!.toLowerCase().indexOf(lowerQuery);
-        
-        // Split node before match
-        const matchNode = firstNode.splitText(matchIndex);
-        // Split node after match
-        matchNode.splitText(searchQuery.length);
+      // Found a text node containing the exact query. Split it safely.
+      const matchIndex = firstNode.nodeValue!.toLowerCase().indexOf(lowerQuery);
+      const matchNode = firstNode.splitText(matchIndex);
+      matchNode.splitText(searchQuery.length);
 
-        // Now matchNode contains exactly the matched string. Wrap it in a <mark>
-        const mark = document.createElement('mark');
-        mark.id = 'transient-match';
-        // Initial active state classes
-        mark.className = 'bg-gold-light text-navy transition-colors duration-1000 ease-in-out rounded-sm';
-        
-        matchNode.parentNode?.insertBefore(mark, matchNode);
-        mark.appendChild(matchNode);
+      // Wrap the matched text in a <mark> element
+      const mark = document.createElement('mark');
+      mark.id = 'transient-match';
+      mark.className = 'bg-gold-light text-navy transition-colors duration-1000 ease-in-out rounded-sm';
+      // CSS scroll margins ensure scrollIntoView accounts for fixed navbar heights
+      mark.style.scrollMarginTop = '150px';
+      mark.style.scrollMarginBottom = '150px';
 
-        // Smooth scroll into view slightly delayed to ensure DOM is settled
-        // Increased to 400ms for mobile devices and aligned with browser compositor frames
-        scrollTimeoutId = setTimeout(() => {
-          requestAnimationFrame(() => {
-            mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          });
-        }, 400);
+      matchNode.parentNode?.insertBefore(mark, matchNode);
+      mark.appendChild(matchNode);
 
-        // 2500ms fade-out effect by stripping the active colors
-        fadeTimerRef.current = setTimeout(() => {
-          mark.classList.remove('bg-gold-light', 'text-navy');
-          mark.classList.add('bg-transparent', 'text-inherit');
-        }, 2500);
-      });
+      // Sanity check: confirm the mark has a valid layout position
+      const rect = mark.getBoundingClientRect();
+      if (rect.top === 0 && rect.height === 0) return;
+
+      // ── Global Mute ──
+      // Set the muting flag BEFORE scrolling. All useScrollDirection and
+      // useAutoHideNav instances will ignore scroll events while this is set.
+      document.body.dataset.isAutoScrolling = 'true';
+
+      // ── Scroll ──
+      mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // ── Scroll Completion Detection ──
+      // Use the native `scrollend` event (Chrome 114+, Firefox 109+, Safari 17.4+)
+      // with a scroll-idle fallback for older browsers.
+      let idleTimer: ReturnType<typeof setTimeout> | null = null;
+
+      const onScrollEnd = () => {
+        // Clean up both listeners
+        window.removeEventListener('scrollend', onScrollEnd);
+        window.removeEventListener('scroll', onScrollIdle);
+        if (idleTimer) clearTimeout(idleTimer);
+        clearAutoScrollFlag();
+      };
+
+      const onScrollIdle = () => {
+        // Reset the idle timer on each scroll tick — when scrolling stops
+        // for 200ms, we consider the scroll animation complete.
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(onScrollEnd, 200);
+      };
+
+      // Register both — whichever fires first wins
+      window.addEventListener('scrollend', onScrollEnd, { once: true });
+      window.addEventListener('scroll', onScrollIdle, { passive: true });
+
+      // Safety net: if the element is already in view (no scroll needed),
+      // scrollend may never fire. Clear the flag after 2 seconds maximum.
+      const safetyTimer = setTimeout(() => {
+        clearAutoScrollFlag();
+        window.removeEventListener('scrollend', onScrollEnd);
+        window.removeEventListener('scroll', onScrollIdle);
+        if (idleTimer) clearTimeout(idleTimer);
+      }, 2000);
+
+      scrollEndCleanup = () => {
+        clearAutoScrollFlag();
+        window.removeEventListener('scrollend', onScrollEnd);
+        window.removeEventListener('scroll', onScrollIdle);
+        if (idleTimer) clearTimeout(idleTimer);
+        clearTimeout(safetyTimer);
+      };
+
+      // 2500ms fade-out effect by stripping the active highlight colors
+      fadeTimerRef.current = setTimeout(() => {
+        mark.classList.remove('bg-gold-light', 'text-navy');
+        mark.classList.add('bg-transparent', 'text-inherit');
+      }, 2500);
     });
 
+    // Start observing the content div
+    observer.observe(contentRef.current);
+
     return () => {
-      cancelAnimationFrame(rafId);
-      if (scrollTimeoutId) {
-        clearTimeout(scrollTimeoutId);
-      }
-      // DOM cleanup ONLY — do NOT clearTimeout(fadeTimerRef.current)
-      
-      // Properly restore the DOM to its original state before unmount or next effect
+      // Disconnect the ResizeObserver if it hasn't fired yet
+      observer?.disconnect();
+
+      // Clean up scroll listeners if the component unmounts mid-scroll
+      scrollEndCleanup?.();
+
+      // Restore the DOM to its original state
       const existingHighlight = contentRef.current?.querySelector('#transient-match');
       if (existingHighlight) {
         const parent = existingHighlight.parentNode;
@@ -122,14 +182,16 @@ export default function ReaderView({ title, contentHtml, searchQuery, searchKey 
           {title}
         </h1>
       </header>
-      
+
       {/* 
         Tailwind Typography (`prose`) automatically styles raw HTML (headings, paragraphs, lists, etc.).
         We use `dark:prose-invert` for dark mode compatibility and explicitly theme links and blockquotes.
+        Note: transition-colors is applied only to the container div itself (for dark mode toggle),
+        NOT to all descendants via [&_*] — that wildcard caused layout thrash during mark insertion.
       */}
-      <div 
+      <div
         ref={contentRef}
-        className={`prose ${proseSizeMap[fontSize]} dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-headings:break-words prose-a:text-gold dark:prose-a:text-gold-light hover:prose-a:text-gold-dark prose-blockquote:border-l-gold ${isMounted ? '[&_*]:transition-colors [&_*]:duration-300 [&_*]:ease-in-out transition-colors duration-300 ease-in-out' : ''}`}
+        className={`prose ${proseSizeMap[fontSize]} dark:prose-invert max-w-none prose-headings:text-navy dark:prose-headings:text-text-heading-dark prose-headings:break-words prose-a:text-gold dark:prose-a:text-gold-light hover:prose-a:text-gold-dark prose-blockquote:border-l-gold ${isMounted ? 'transition-colors duration-300 ease-in-out' : ''}`}
         dangerouslySetInnerHTML={{ __html: contentHtml }}
       />
     </article>

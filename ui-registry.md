@@ -438,3 +438,9 @@ All future components must match these established patterns for consistency.
 - **Transition**: `transition-all duration-300 ease-in-out`
 - **Details**: Standard mobile chapter switcher (`md:hidden`). Centered current chapter title is truncated (`truncate max-w-[150px] sm:max-w-[200px]`). Previous/next arrows are Lucide `ChevronLeft`/`ChevronRight`. Active directions are wrapped in React Router `<Link>`, and inactive directions are rendered as disabled buttons with `opacity-30 cursor-not-allowed pointer-events-none`.
 
+---
+
+## Robots.txt Directives
+- **File**: `public/robots.txt`
+- **Date**: 2026-07-16
+- **Note**: Added a standard robots.txt file to allow all search engines to crawl the site and specify the location of the sitemap. This prevents fallback SPA routing (returning index.html) when search engine crawlers request the robots.txt endpoint, addressing a 57-error Lighthouse SEO issue. No visual UI styles were changed.

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.fhrnigeria.app/sitemap.xml
+Sitemap: https://fhrnigeria.app/sitemap.xml

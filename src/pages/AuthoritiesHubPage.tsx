@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
+import SEO from '../components/common/SEO';
 import { useIsLocked } from '../hooks/useLaunchGate';
 import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
 
@@ -51,7 +52,14 @@ export default function AuthoritiesHubPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <>
+      <SEO
+        title="Legal Authorities & Case Laws"
+        description="Read latest judgments and legal principles on Fundamental Rights Enforcement procedure in Nigeria."
+        url="/authorities"
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
       <div className="mb-8">
         <h1 className="text-3xl font-serif font-bold text-navy dark:text-text-heading-dark">
           New Authorities
@@ -142,6 +150,9 @@ export default function AuthoritiesHubPage() {
         onClose={() => setShowLockedModal(false)}
       />
     </div>
-  );
+  </>
+);
 }
+
+
 

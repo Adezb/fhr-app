@@ -2,8 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation, Navigate } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
+import SEO from '../components/common/SEO';
 import ReaderView from '../components/reader/ReaderView';
 import { useIsLocked } from '../hooks/useLaunchGate';
+
+function getPlainTextExcerpt(htmlStr: string, maxLength: number = 155): string {
+  const text = htmlStr.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trim() + '…';
+}
 
 export default function AuthorityPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -72,6 +79,11 @@ export default function AuthorityPage() {
 
   return (
     <>
+      <SEO
+        title={authority.title}
+        description={getPlainTextExcerpt(authority.content_html)}
+        url={`/authorities/${authority.slug}`}
+      />
       {/* 
         Note: We intentionally omit <ReaderBottomNav> here per architectural specs.
         Authorities are discrete reference documents, not sequential chapters.
@@ -86,3 +98,4 @@ export default function AuthorityPage() {
     </>
   );
 }
+

@@ -458,16 +458,19 @@ All future components must match these established patterns for consistency.
 
 ---
 
-## LaunchPage (Standalone Landing Page)
+## LaunchPage (Standalone Landing Page & Night Mode Polish)
 - **File**: `src/pages/LaunchPage.tsx`
-- **Date**: 2026-07-27
+- **Date**: 2026-07-27 (UI/UX Polish)
 - **Route**: `/launch` (standalone route outside `AppShell`)
-- **Background**: `bg-surface dark:bg-midnight`
-- **Countdown Cards**: `bg-navy dark:bg-midnight-light border border-white/10 dark:border-slate-800 rounded-xl p-3 sm:p-4 shadow-lg`
-- **Countdown Numbers**: `text-gold dark:text-gold-light font-serif text-2xl sm:text-4xl font-bold`
-- **Install/QR Card Container**: `bg-surface-alt dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8`
+- **Background**: `bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200` (soft off-white for night viewing)
+- **Countdown Cards**: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 sm:p-4 shadow-md`
+- **Countdown Numbers**: `text-navy dark:text-gold-light font-serif text-2xl sm:text-4xl font-bold`
+- **Countdown Labels**: `text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400`
+- **Install/QR Card Container**: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm`
 - **QR Wrapper**: `bg-white p-3 rounded-xl shadow-md border border-slate-200`
 - **Primary Action Button**: `bg-gold hover:bg-gold-light text-navy font-bold shadow-md`
+- **SEO**: Integrated with `<SEO />` using `react-helmet-async` for route metadata and cover image (`/fhr-full-cover.png`).
+
 
 ---
 

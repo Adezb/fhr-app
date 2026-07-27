@@ -2,11 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation, Navigate } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
+import SEO from '../components/common/SEO';
 import ReaderView from '../components/reader/ReaderView';
 import ReaderBottomNav from '../components/reader/ReaderBottomNav';
 import MobileChapterNav from '../components/book/MobileChapterNav';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useIsLocked } from '../hooks/useLaunchGate';
+
+function getPlainTextExcerpt(htmlStr: string, maxLength: number = 155): string {
+  const text = htmlStr.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trim() + '…';
+}
 
 export default function ChapterPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -177,6 +184,11 @@ export default function ChapterPage() {
 
   return (
     <>
+      <SEO
+        title={chapter.title}
+        description={getPlainTextExcerpt(chapter.content_html)}
+        url={`/book/${chapter.slug}`}
+      />
       <ReaderView 
         title={chapter.title} 
         contentHtml={chapter.content_html} 
@@ -197,3 +209,4 @@ export default function ChapterPage() {
     </>
   );
 }
+

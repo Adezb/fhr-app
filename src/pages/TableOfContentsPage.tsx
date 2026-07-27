@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
+import SEO from '../components/common/SEO';
 import { useIsLocked } from '../hooks/useLaunchGate';
 import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
 
@@ -27,7 +28,14 @@ export default function TableOfContentsPage() {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+    <>
+      <SEO
+        title="Table of Contents"
+        description="Complete chapter index of Fundamental Rights Enforcement practice guide in Nigeria."
+        url="/book"
+      />
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+
       <h1 className="text-3xl font-bold font-serif text-navy dark:text-text-heading-dark mb-8">Table of Contents</h1>
       
       {isLoading ? (
@@ -96,6 +104,10 @@ export default function TableOfContentsPage() {
         onClose={() => setShowLockedModal(false)}
       />
     </div>
-  );
+  </>
+);
 }
+
+
+
 

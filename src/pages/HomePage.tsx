@@ -2,10 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
+import SEO from '../components/common/SEO';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { LEGAL_MAXIMS } from '../lib/maxims';
 import { useIsLocked } from '../hooks/useLaunchGate';
 import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
+
 
 // 1. Dynamic Greeting
 function getGreeting(): string {
@@ -93,7 +95,10 @@ export default function HomePage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <>
+      <SEO url="/" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
       {/* Hero Section */}
       <div className="mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12">
         {/* Left Column — Copy */}
@@ -259,7 +264,6 @@ export default function HomePage() {
             {maxim.english}
           </p>
         </div>
-
       </div>
 
       <AccessRestrictedModal
@@ -267,6 +271,9 @@ export default function HomePage() {
         onClose={() => setShowLockedModal(false)}
       />
     </div>
-  );
+  </>
+);
 }
+
+
 

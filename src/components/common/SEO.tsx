@@ -10,7 +10,7 @@ export interface SEOProps {
 
 const DEFAULT_TITLE = 'Fundamental Rights Enforcement in Nigeria';
 const DEFAULT_DESCRIPTION = 'A practice guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline.';
-const DEFAULT_IMAGE = 'https://fhrnigeria.app/og-image.png';
+const DEFAULT_IMAGE = 'https://fhrnigeria.app/fhr-full-cover.png';
 const SITE_BASE_URL = 'https://fhrnigeria.app';
 
 
@@ -46,6 +46,9 @@ export default function SEO({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullImage} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="813" />
       <meta property="og:url" content={fullUrl} />
 
       {/* Twitter Card */}

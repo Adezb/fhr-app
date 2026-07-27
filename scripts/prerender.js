@@ -90,7 +90,7 @@ function buildMetaTagsHtml({ title, description, image, url }) {
     <meta property="og:image" content="${fullImg}" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:height" content="813" />
     <meta property="og:url" content="${fullUrl}" />
 
     <!-- Twitter Card -->
@@ -148,21 +148,21 @@ async function main() {
       path: '/',
       title: 'Fundamental Rights Enforcement in Nigeria',
       description: 'A practice guide to fundamental rights enforcement in Nigeria. Access legal authorities and case laws offline.',
-      image: '/og-image.png',
+      image: '/fhr-full-cover.png',
       url: '/',
     },
     {
       path: '/book',
       title: 'Table of Contents | Fundamental Rights Practice Guide',
       description: 'Complete chapter index of Fundamental Rights Enforcement practice guide in Nigeria.',
-      image: '/og-image.png',
+      image: '/fhr-full-cover.png',
       url: '/book',
     },
     {
       path: '/authorities',
       title: 'Legal Authorities & Case Laws | Fundamental Rights Practice Guide',
       description: 'Read latest judgments and legal principles on Fundamental Rights Enforcement procedure in Nigeria.',
-      image: '/og-image.png',
+      image: '/fhr-full-cover.png',
       url: '/authorities',
     },
   ];
@@ -196,7 +196,7 @@ async function main() {
             path: `/book/${ch.slug}`,
             title: `${ch.title} | Fundamental Rights Practice Guide`,
             description: desc,
-            image: '/og-image.png',
+            image: '/fhr-full-cover.png',
             url: `/book/${ch.slug}`,
           });
         }
@@ -224,7 +224,7 @@ async function main() {
             path: `/authorities/${auth.slug}`,
             title: `${auth.title} | Fundamental Rights Practice Guide`,
             description: desc,
-            image: '/og-image.png',
+            image: '/fhr-full-cover.png',
             url: `/authorities/${auth.slug}`,
           });
         }

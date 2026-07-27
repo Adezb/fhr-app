@@ -1,40 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import SEO from '../components/common/SEO';
+import InstallGuideModal from '../components/pwa/InstallGuideModal';
 import { useLaunchGate } from '../hooks/useLaunchGate';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 
 export default function LaunchPage() {
   const { isLocked, timeRemaining } = useLaunchGate();
-  const { showPrompt, handleInstall } = usePWAInstall();
-  const [isIOS, setIsIOS] = useState(false);
+  const { showPrompt, handleInstall, isStandalone } = usePWAInstall();
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
-  useEffect(() => {
-    const checkIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
-    setIsIOS(checkIOS);
-  }, []);
+  const handleInstallClick = () => {
+    if (showPrompt) {
+      handleInstall();
+    } else {
+      setShowGuideModal(true);
+    }
+  };
 
   return (
     <>
       <SEO
         title="Official App Launch & PWA Download"
         description="Official book app launch for Fundamental Rights Practice Guide by CEK TOP VENTURES LTD. Launching Monday, August 3rd, 2026. On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter."
-        image="/fhr-full-cover.png"
+        image="https://fhrnigeria.app/fhr-full-cover.png"
         url="/launch"
       />
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 flex flex-col justify-between py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
         {/* Top Header */}
-        <header className="max-w-4xl mx-auto w-full flex items-center justify-between border-b border-slate-200 dark:border-slate-800/80 pb-4 mb-8">
-          <Link to="/" className="font-serif font-bold text-lg tracking-tight text-navy dark:text-gold-light hover:opacity-90 transition-opacity flex items-center gap-2">
-            <span>⚖️</span> Fundamental Rights Practice Guide
+        <header className="max-w-4xl mx-auto w-full flex items-center justify-between gap-3 sm:gap-4 border-b border-slate-200 dark:border-slate-800/80 pb-4 mb-8">
+          <Link
+            to="/"
+            className="font-serif font-bold text-sm sm:text-base md:text-lg tracking-tight text-navy dark:text-gold-light hover:opacity-90 transition-opacity flex items-center gap-1.5 sm:gap-2 min-w-0"
+          >
+            <span className="shrink-0 text-base sm:text-lg">⚖️</span>
+            <span className="truncate sm:whitespace-normal">Fundamental Rights Practice Guide</span>
           </Link>
           <Link
             to="/"
-            className="text-xs sm:text-sm font-medium text-gold hover:text-gold-light transition-colors flex items-center gap-1"
+            className="text-xs sm:text-sm font-medium text-gold hover:text-gold-light transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap"
           >
             Explore Home &rarr;
           </Link>
@@ -55,7 +61,7 @@ export default function LaunchPage() {
               Fundamental Rights Practice Guide
             </h1>
             <p className="text-base sm:text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              A digital companion app for all. To be launched on Monday, August 3rd, 2026 at 3:00 PM WAT. On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
+              A digital legal companion app for all. To be launched on Monday, August 3rd, 2026 at 3:00 PM WAT. On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
             </p>
           </div>
 
@@ -131,13 +137,16 @@ export default function LaunchPage() {
                 Install as a Progressive Web App (PWA) for 100% offline access—no app store download required.
               </p>
 
-              {isIOS ? (
-                <div className="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-lg border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                  To install on iOS Safari: Tap <strong>Share</strong> and select <strong>"Add to Home Screen"</strong>.
-                </div>
-              ) : showPrompt ? (
+              {isStandalone ? (
+                <Link
+                  to="/"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-md shadow text-sm font-bold text-navy bg-gold hover:bg-gold-light transition-colors"
+                >
+                  Open App in Browser &rarr;
+                </Link>
+              ) : (
                 <button
-                  onClick={handleInstall}
+                  onClick={handleInstallClick}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-md shadow-md text-sm font-bold text-navy bg-gold hover:bg-gold-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-colors cursor-pointer"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,13 +154,6 @@ export default function LaunchPage() {
                   </svg>
                   Install App Now
                 </button>
-              ) : (
-                <Link
-                  to="/"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-md shadow text-sm font-bold text-navy bg-gold hover:bg-gold-light transition-colors"
-                >
-                  Open App in Browser &rarr;
-                </Link>
               )}
             </div>
 
@@ -188,6 +190,11 @@ export default function LaunchPage() {
           </a>
         </footer>
       </div>
+
+      <InstallGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+      />
     </>
   );
 }

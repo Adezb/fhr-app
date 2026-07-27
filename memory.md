@@ -38,11 +38,25 @@
 
 
 
+## Recent Architectural Feature: SEO Image, Mobile Header Responsive Layout, and PWA Install Logic
+- **Status**: Completed & Production Build Verified
+
+### Components & Utilities Implemented/Updated
+1. `public/fhr-full-cover.png`: Compressed cover image from 921 KB (2441x1654) down to **106.37 KB** (1200x813 PNG). Guarantees WhatsApp link preview scrapers unfurl the Open Graph card without hitting WhatsApp's 300KB image payload limit.
+2. `src/components/common/SEO.tsx`: Updated `DEFAULT_IMAGE` to absolute `https://fhrnigeria.app/fhr-full-cover.png`. Enforces absolute URL conversion for relative paths and injects `og:image:type` (`image/png`), `og:image:width` (1200), and `og:image:height` (813).
+3. `index.html` & `scripts/prerender.js`: Updated static template fallback and pre-rendered static HTML routes (`dist/launch/index.html`, `dist/*/index.html`) to use absolute `https://fhrnigeria.app/fhr-full-cover.png`.
+4. `src/hooks/usePWAInstall.ts`: Refactored hook to track `isStandalone` state using `window.matchMedia('(display-mode: standalone)')` and `(navigator as any).standalone`. Returned `isStandalone` in hook return value.
+5. `src/components/pwa/InstallGuideModal.tsx`: New responsive modal explaining manual installation steps tailored to user environment (iOS Safari share sheet, WhatsApp/Instagram in-app WebViews, and unsupported Android/desktop browser menus).
+6. `src/pages/LaunchPage.tsx`:
+   - Updated header container with `gap-3 sm:gap-4`, `min-w-0`, responsive typography (`text-sm sm:text-base md:text-lg`), and `shrink-0 whitespace-nowrap` on "Explore Home &rarr;" link to prevent mobile squeezing and line wraps.
+   - Refactored PWA action button logic: Displays "Open App in Browser &rarr;" strictly when in standalone mode (`isStandalone === true`). When in browser/WebView (`isStandalone === false`), explicitly displays "Install App Now", triggering native prompt if available or `InstallGuideModal` when native prompt cannot be triggered.
+
 ## Key Technical Decisions
-- **Static HTML Pre-rendering**: Combined client-side dynamic tag management (`react-helmet-async`) with a build-time HTML generator script (`scripts/prerender.js`) in `postbuild`. This ensures social crawlers that ignore client-side JS receive pre-rendered HTML `<head>` tags directly from static hosting (Vercel).
-- **Soft Light/Dark Color Scheme**: `LaunchPage.tsx` background updated from pure `#FFFFFF` (`bg-surface`) to `#F8FAFC` (`bg-slate-50`) in light mode and `#020617` (`dark:bg-slate-950`) in dark mode with white/slate-900 cards, avoiding harsh glare for late night reading.
+- **Absolute Social Image URLs**: Open Graph specification requires absolute HTTP/HTTPS URLs for scrapers (e.g. WhatsApp, Twitter, Facebook). Relative image paths cause scraping failures on external webviews.
+- **Standalone Display Mode Check**: Rather than relying on `beforeinstallprompt` presence to determine installation status, the app explicitly queries `(display-mode: standalone)` media query.
+- **Responsive Header Text Truncation**: Used `min-w-0` on flex children and `shrink-0` on action links to ensure right-aligned CTA elements are never pushed off-screen on small viewports (<360px).
 
 ## Next Steps / Backlog
-- Staging deployment & live link preview verification on WhatsApp and Twitter.
+- Production deployment on Vercel and final live link sharing tests on WhatsApp, iMessage, and Twitter.
 
 

@@ -458,19 +458,34 @@ All future components must match these established patterns for consistency.
 
 ---
 
-## LaunchPage (Standalone Landing Page & Night Mode Polish)
+## LaunchPage (Standalone Landing Page & Header/PWA Polish)
 - **File**: `src/pages/LaunchPage.tsx`
-- **Date**: 2026-07-27 (UI/UX Polish)
+- **Date**: 2026-07-27 (Header Flex Alignment & PWA Install State Refactor)
 - **Route**: `/launch` (standalone route outside `AppShell`)
 - **Background**: `bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200` (soft off-white for night viewing)
+- **Header Alignment**: `flex items-center justify-between gap-3 sm:gap-4 border-b border-slate-200 dark:border-slate-800/80 pb-4 mb-8`
+- **Header Title**: `text-sm sm:text-base md:text-lg min-w-0 font-serif font-bold text-navy dark:text-gold-light hover:opacity-90 transition-opacity` with `truncate sm:whitespace-normal`
+- **Header Action Link**: `text-xs sm:text-sm font-medium text-gold hover:text-gold-light transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap`
 - **Countdown Cards**: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 sm:p-4 shadow-md`
 - **Countdown Numbers**: `text-navy dark:text-gold-light font-serif text-2xl sm:text-4xl font-bold`
 - **Countdown Labels**: `text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400`
 - **Install/QR Card Container**: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm`
 - **QR Wrapper**: `bg-white p-3 rounded-xl shadow-md border border-slate-200`
 - **Primary Action Button**: `bg-gold hover:bg-gold-light text-navy font-bold shadow-md`
-- **SEO**: Integrated with `<SEO />` using `react-helmet-async` for route metadata and cover image (`/fhr-full-cover.png`).
+- **SEO**: Integrated with `<SEO />` using `react-helmet-async` for route metadata and optimized cover image (`https://fhrnigeria.app/fhr-full-cover.png`).
 
+---
+
+## InstallGuideModal (PWA Manual Install Helper)
+- **File**: `src/components/pwa/InstallGuideModal.tsx`
+- **Date**: 2026-07-27
+- **Overlay**: `fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4 animate-fade-in`
+- **Card**: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md mx-auto p-6 transition-all transform animate-scale-up text-slate-800 dark:text-slate-200 relative`
+- **Icon Container**: `h-12 w-12 rounded-2xl bg-navy/10 dark:bg-gold/10 text-navy dark:text-gold-light mb-4`
+- **Steps Container**: `bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 mb-6 space-y-3.5`
+- **Step Badges**: `w-5 h-5 rounded-full bg-navy text-white text-[11px] font-bold shrink-0 mt-0.5`
+- **Text Colors**: Heading `text-navy dark:text-gold-light`, Body `text-slate-600 dark:text-slate-300`
+- **Primary CTA**: `w-full py-2.5 px-4 rounded-xl shadow font-bold text-sm text-navy bg-gold hover:bg-gold-light focus:outline-none focus:ring-2 focus:ring-navy transition-colors`
 
 ---
 

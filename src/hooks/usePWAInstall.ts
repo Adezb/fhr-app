@@ -18,8 +18,21 @@ export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isStandalone, setIsStandalone] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (navigator as any).standalone === true ||
+      document.referrer.includes('android-app://')
+    );
+  });
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(display-mode: standalone)');
+    const handleChange = (e: MediaQueryListEvent) => setIsStandalone(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
     const handleBeforeInstallPrompt = (e: Event) => {
       // Prevent the mini-infobar from appearing on mobile natively
       e.preventDefault();
@@ -48,6 +61,7 @@ export function usePWAInstall() {
     window.addEventListener('pwa-success-install', handleGlobalSuccess);
 
     return () => {
+      mediaQuery.removeEventListener('change', handleChange);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('pwa-success-install', handleGlobalSuccess);
     };
@@ -84,5 +98,5 @@ export function usePWAInstall() {
     setShowSuccessModal(false);
   };
 
-  return { showPrompt, showSuccessModal, handleInstall, handleDismiss, handleDismissSuccess };
+  return { showPrompt, showSuccessModal, isStandalone, handleInstall, handleDismiss, handleDismissSuccess };
 }

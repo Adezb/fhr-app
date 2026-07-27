@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
+import { useIsLocked } from '../hooks/useLaunchGate';
+import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
 
 export default function TableOfContentsPage() {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const isLocked = useIsLocked();
+  const [showLockedModal, setShowLockedModal] = useState(false);
 
   useEffect(() => {
     async function fetchChapters() {
@@ -38,24 +42,60 @@ export default function TableOfContentsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {chapters.map((chapter) => (
-            <Link 
-              key={chapter.id} 
-              to={`/book/${chapter.slug}`}
-              className="block p-5 bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-300 group"
-            >
-              <h2 className="text-xl font-medium font-serif text-navy dark:text-text-heading-dark group-hover:text-gold dark:group-hover:text-gold-light transition-colors">
-                {chapter.title}
-              </h2>
-              {chapter.summary && (
-                <p className="mt-2 text-text-body dark:text-text-body-dark line-clamp-2">
-                  {chapter.summary}
-                </p>
-              )}
-            </Link>
-          ))}
+          {chapters.map((chapter) => {
+            const cardInner = (
+              <>
+                <h2 className="text-xl font-medium font-serif text-navy dark:text-text-heading-dark group-hover:text-gold dark:group-hover:text-gold-light transition-colors">
+                  {chapter.title}
+                </h2>
+                {chapter.summary && (
+                  <p className="mt-2 text-text-body dark:text-text-body-dark line-clamp-2">
+                    {chapter.summary}
+                  </p>
+                )}
+              </>
+            );
+
+            if (isLocked) {
+              return (
+                <div
+                  key={chapter.id}
+                  onClick={() => setShowLockedModal(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === ' ') {
+                        e.preventDefault();
+                      }
+                      setShowLockedModal(true);
+                    }
+                  }}
+                  className="block p-5 bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-300 group cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                >
+                  {cardInner}
+                </div>
+              );
+            }
+
+            return (
+              <Link 
+                key={chapter.id} 
+                to={`/book/${chapter.slug}`}
+                className="block p-5 bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-300 group"
+              >
+                {cardInner}
+              </Link>
+            );
+          })}
         </div>
       )}
+
+      <AccessRestrictedModal
+        isOpen={showLockedModal}
+        onClose={() => setShowLockedModal(false)}
+      />
     </div>
   );
 }
+

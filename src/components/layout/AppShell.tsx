@@ -4,7 +4,9 @@ import TopNavbar from './TopNavbar';
 import BottomNav from './BottomNav';
 import { useSync } from '../../hooks/useSync';
 import { useSearch } from '../../hooks/useSearch';
+import { useIsLocked } from '../../hooks/useLaunchGate';
 import InstallModal from '../pwa/InstallModal';
+import AccessRestrictedModal from '../launch/AccessRestrictedModal';
 import SearchOverlay from '../search/SearchOverlay';
 
 export default function AppShell() {
@@ -15,6 +17,9 @@ export default function AppShell() {
 
   // Initialize background sync (auto-runs on launch & network reconnect)
   const { error: syncError } = useSync();
+
+  const isLocked = useIsLocked();
+  const [showSearchLockedModal, setShowSearchLockedModal] = useState(false);
 
   // Search state — shared between TopNavbar (trigger) and SearchOverlay (consumer)
   const {
@@ -27,9 +32,17 @@ export default function AppShell() {
     handleQueryChange,
   } = useSearch();
 
+  const handleSearchClick = () => {
+    if (isLocked) {
+      setShowSearchLockedModal(true);
+    } else {
+      openSearch();
+    }
+  };
+
   return (
     <div className={`min-h-screen overflow-x-hidden bg-surface dark:bg-midnight text-text-body dark:text-text-body-dark flex flex-col ${isMounted ? 'transition-colors duration-300 ease-in-out' : ''}`}>
-      <TopNavbar onSearchClick={openSearch} />
+      <TopNavbar onSearchClick={handleSearchClick} />
 
       {/* Sync Error Banner */}
       {syncError && (
@@ -48,6 +61,10 @@ export default function AppShell() {
 
       <BottomNav />
       <InstallModal />
+      <AccessRestrictedModal
+        isOpen={showSearchLockedModal}
+        onClose={() => setShowSearchLockedModal(false)}
+      />
       <SearchOverlay
         isOpen={isSearchOpen}
         query={query}
@@ -59,3 +76,4 @@ export default function AppShell() {
     </div>
   );
 }
+

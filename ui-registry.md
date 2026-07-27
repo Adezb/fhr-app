@@ -444,3 +444,40 @@ All future components must match these established patterns for consistency.
 - **File**: `public/robots.txt`
 - **Date**: 2026-07-16
 - **Note**: Added a standard robots.txt file to allow all search engines to crawl the site and specify the location of the sitemap. This prevents fallback SPA routing (returning index.html) when search engine crawlers request the robots.txt endpoint, addressing a 57-error Lighthouse SEO issue. No visual UI styles were changed.
+
+---
+
+## AccessRestrictedModal
+- **File**: `src/components/launch/AccessRestrictedModal.tsx`
+- **Date**: 2026-07-27
+- **Overlay**: `fixed inset-0 z-[100] flex items-center justify-center bg-navy/60 backdrop-blur-sm p-4`
+- **Card**: `bg-surface dark:bg-midnight border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl w-[90%] max-w-sm mx-auto p-6 animate-fade-in-up`
+- **Icon Container**: `h-12 w-12 rounded-full bg-navy text-gold-light mb-4 shadow-inner`
+- **Text Colors**: Heading `text-navy dark:text-text-heading-dark`, Body `text-text-body dark:text-text-body-dark`, Dismiss `text-text-muted hover:underline`, Footer `text-text-muted`
+- **Primary CTA**: `bg-gold hover:bg-gold-light text-navy font-bold py-2.5 px-4 rounded-md shadow-sm`
+
+---
+
+## LaunchPage (Standalone Landing Page)
+- **File**: `src/pages/LaunchPage.tsx`
+- **Date**: 2026-07-27
+- **Route**: `/launch` (standalone route outside `AppShell`)
+- **Background**: `bg-surface dark:bg-midnight`
+- **Countdown Cards**: `bg-navy dark:bg-midnight-light border border-white/10 dark:border-slate-800 rounded-xl p-3 sm:p-4 shadow-lg`
+- **Countdown Numbers**: `text-gold dark:text-gold-light font-serif text-2xl sm:text-4xl font-bold`
+- **Install/QR Card Container**: `bg-surface-alt dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8`
+- **QR Wrapper**: `bg-white p-3 rounded-xl shadow-md border border-slate-200`
+- **Primary Action Button**: `bg-gold hover:bg-gold-light text-navy font-bold shadow-md`
+
+---
+
+## Time-Gated Content Interception & Search Lock
+- **Files**: `src/pages/HomePage.tsx`, `src/pages/TableOfContentsPage.tsx`, `src/pages/AuthoritiesHubPage.tsx`, `src/components/layout/AppShell.tsx`, `src/pages/ChapterPage.tsx`, `src/pages/AuthorityPage.tsx`
+- **Date**: 2026-07-27
+- **Interception Strategy**:
+  - Listing & hub pages (`/`, `/book`, `/authorities`) render identical UI cards, but wrap interactive cards in `div[role="button"][tabIndex=0]` with `cursor-pointer` when `isLocked === true`, triggering `AccessRestrictedModal` instead of navigating.
+  - Search trigger in `TopNavbar` intercepted at `AppShell` level: `handleSearchClick` triggers `AccessRestrictedModal` when `isLocked === true` instead of opening `SearchOverlay`.
+  - Direct URL access to `/book/:slug` and `/authorities/:slug` while locked automatically redirects to `/launch` via `<Navigate to="/launch" replace />`.
+
+
+

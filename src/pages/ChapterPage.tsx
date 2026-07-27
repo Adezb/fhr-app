@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation, Navigate } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Chapter } from '../types';
 import ReaderView from '../components/reader/ReaderView';
 import ReaderBottomNav from '../components/reader/ReaderBottomNav';
 import MobileChapterNav from '../components/book/MobileChapterNav';
 import { useReadingProgress } from '../hooks/useReadingProgress';
+import { useIsLocked } from '../hooks/useLaunchGate';
 
 export default function ChapterPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -15,6 +16,7 @@ export default function ChapterPage() {
   const highlightQuery = searchParams.get('q') || undefined;
   
   const { saveProgress } = useReadingProgress();
+  const isLocked = useIsLocked();
   
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [prevChapter, setPrevChapter] = useState<Chapter | null>(null);
@@ -24,7 +26,7 @@ export default function ChapterPage() {
 
   useEffect(() => {
     async function loadChapter() {
-      if (!slug) return;
+      if (!slug || isLocked) return;
       
       setIsLoading(true);
       // Reset scroll position instantly to 0 as soon as navigation starts to clear previous page state
@@ -103,11 +105,11 @@ export default function ChapterPage() {
     }
     
     loadChapter();
-  }, [slug, navigate]);
+  }, [slug, navigate, searchParams, isLocked]);
 
   // Track reading progress
   useEffect(() => {
-    if (!chapter || !slug) return;
+    if (!chapter || !slug || isLocked) return;
 
     let timeoutId: number;
 
@@ -152,7 +154,11 @@ export default function ChapterPage() {
         window.clearTimeout(timeoutId);
       }
     };
-  }, [chapter, slug]);
+  }, [chapter, slug, saveProgress, isLocked]);
+
+  if (isLocked) {
+    return <Navigate to="/launch" replace />;
+  }
 
   if (isLoading) {
     return (

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import HomePage from './pages/HomePage';
+import LaunchPage from './pages/LaunchPage';
 import TableOfContentsPage from './pages/TableOfContentsPage';
 import ChapterPage from './pages/ChapterPage';
 import AuthoritiesHubPage from './pages/AuthoritiesHubPage';
@@ -16,6 +17,7 @@ import AdminMobileGuard from './components/admin/AdminMobileGuard';
 import SuperAdminRoute from './components/admin/SuperAdminRoute';
 import { isMobileOrTabletDevice } from './utils/device';
 import ReloadPrompt from './components/pwa/ReloadPrompt';
+import { LaunchGateProvider } from './hooks/useLaunchGate';
 
 function App() {
   useEffect(() => {
@@ -39,35 +41,40 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes inside AppShell */}
-        <Route path="/" element={<AppShell />}>
-          <Route index element={<HomePage />} />
-          <Route path="book" element={<TableOfContentsPage />} />
-          <Route path="book/:slug" element={<ChapterPage />} />
-          <Route path="authorities" element={<AuthoritiesHubPage />} />
-          <Route path="authorities/:slug" element={<AuthorityPage />} />
-        </Route>
-        
-        {/* Admin CMS Routes */}
-        <Route element={<AdminMobileGuard />}>
-          <Route path="/admin-cms/login" element={<AdminLoginPage />} />
+    <LaunchGateProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Launch Promo Page — standalone, no AppShell chrome */}
+          <Route path="/launch" element={<LaunchPage />} />
+
+          {/* Public Routes inside AppShell */}
+          <Route path="/" element={<AppShell />}>
+            <Route index element={<HomePage />} />
+            <Route path="book" element={<TableOfContentsPage />} />
+            <Route path="book/:slug" element={<ChapterPage />} />
+            <Route path="authorities" element={<AuthoritiesHubPage />} />
+            <Route path="authorities/:slug" element={<AuthorityPage />} />
+          </Route>
           
-          <Route path="/admin-cms" element={<ProtectedRoute />}>
-            <Route element={<AdminShell />}>
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboardPage />} />
-              <Route element={<SuperAdminRoute />}>
-                <Route path="chapters/:id" element={<ChapterEditorPage />} />
+          {/* Admin CMS Routes */}
+          <Route element={<AdminMobileGuard />}>
+            <Route path="/admin-cms/login" element={<AdminLoginPage />} />
+            
+            <Route path="/admin-cms" element={<ProtectedRoute />}>
+              <Route element={<AdminShell />}>
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboardPage />} />
+                <Route element={<SuperAdminRoute />}>
+                  <Route path="chapters/:id" element={<ChapterEditorPage />} />
+                </Route>
+                <Route path="authorities/:id" element={<AuthorityEditorPage />} />
               </Route>
-              <Route path="authorities/:id" element={<AuthorityEditorPage />} />
             </Route>
           </Route>
-        </Route>
-      </Routes>
-      <ReloadPrompt />
-    </BrowserRouter>
+        </Routes>
+        <ReloadPrompt />
+      </BrowserRouter>
+    </LaunchGateProvider>
   );
 }
 

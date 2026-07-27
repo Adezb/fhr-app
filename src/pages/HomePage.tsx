@@ -4,6 +4,8 @@ import { getDB } from '../lib/db';
 import type { Authority } from '../types';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { LEGAL_MAXIMS } from '../lib/maxims';
+import { useIsLocked } from '../hooks/useLaunchGate';
+import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
 
 // 1. Dynamic Greeting
 function getGreeting(): string {
@@ -19,6 +21,8 @@ export default function HomePage() {
   const { progress } = useReadingProgress();
   const [authorities, setAuthorities] = useState<Authority[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const isLocked = useIsLocked();
+  const [showLockedModal, setShowLockedModal] = useState(false);
 
   // Daily Maxim Rotation (deterministic by day of year)
   const maxim = useMemo(() => {
@@ -52,6 +56,41 @@ export default function HomePage() {
 
     loadRecentAuthorities();
   }, []);
+
+  const continueReadingContent = (
+    <>
+      <div>
+        <div className="text-xs uppercase tracking-widest text-gold font-semibold flex items-center gap-2">
+          <span>📖</span> {progress ? 'CONTINUE READING' : 'START READING'}
+        </div>
+
+        <h2 className="text-lg font-serif font-bold !text-white mt-2 md:mt-4 group-hover:!text-gold-light transition-colors">
+          {progress ? progress.bookTitle : 'Fundamental Rights Enforcement'}
+        </h2>
+        <p className="text-sm text-slate-300 mt-1">
+          {progress ? progress.chapterTitle : 'Begin with the Front Matter'}
+        </p>
+
+        {progress && (
+          <div className="mt-4 md:mt-6">
+            <div className="bg-white/10 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-gold h-full rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${progress.scrollPercentage}%` }}
+              />
+            </div>
+            <div className="text-xs text-slate-400 mt-1.5 text-right">
+              {Math.round(progress.scrollPercentage)}%
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="text-gold font-medium text-sm mt-4 md:mt-6 flex items-center gap-1 group-hover:text-gold-light transition-colors group-hover:translate-x-1 duration-200 w-fit">
+        {progress ? 'Resume' : 'Start Reading'} &rarr;
+      </div>
+    </>
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -93,41 +132,31 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Continue Reading Card */}
-        <Link
-          to={progress ? `/book/${progress.chapterSlug}` : "/book"}
-          className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-4 md:p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300"
-        >
-          <div>
-            <div className="text-xs uppercase tracking-widest text-gold font-semibold flex items-center gap-2">
-              <span>📖</span> {progress ? 'CONTINUE READING' : 'START READING'}
-            </div>
-
-            <h2 className="text-lg font-serif font-bold !text-white mt-2 md:mt-4 group-hover:!text-gold-light transition-colors">
-              {progress ? progress.bookTitle : 'Fundamental Rights Enforcement'}
-            </h2>
-            <p className="text-sm text-slate-300 mt-1">
-              {progress ? progress.chapterTitle : 'Begin with the Front Matter'}
-            </p>
-
-            {progress && (
-              <div className="mt-4 md:mt-6">
-                <div className="bg-white/10 rounded-full h-2 overflow-hidden">
-                  <div
-                    className="bg-gold h-full rounded-full transition-all duration-500 ease-out"
-                    style={{ width: `${progress.scrollPercentage}%` }}
-                  />
-                </div>
-                <div className="text-xs text-slate-400 mt-1.5 text-right">
-                  {Math.round(progress.scrollPercentage)}%
-                </div>
-              </div>
-            )}
+        {isLocked ? (
+          <div
+            onClick={() => setShowLockedModal(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === ' ') {
+                  e.preventDefault();
+                }
+                setShowLockedModal(true);
+              }
+            }}
+            className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-4 md:p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300 cursor-pointer"
+            role="button"
+            tabIndex={0}
+          >
+            {continueReadingContent}
           </div>
-
-          <div className="text-gold font-medium text-sm mt-4 md:mt-6 flex items-center gap-1 group-hover:text-gold-light transition-colors group-hover:translate-x-1 duration-200 w-fit">
-            {progress ? 'Resume' : 'Start Reading'} &rarr;
-          </div>
-        </Link>
+        ) : (
+          <Link
+            to={progress ? `/book/${progress.chapterSlug}` : "/book"}
+            className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-4 md:p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300"
+          >
+            {continueReadingContent}
+          </Link>
+        )}
 
         {/* Recent Authorities Header */}
         <div className="md:col-start-2 flex items-end justify-between border-b border-slate-200 dark:border-slate-800 pb-2 md:mt-0 mt-4">
@@ -156,12 +185,8 @@ export default function HomePage() {
         ) : (
           authorities.map((auth, index) => {
             const year = auth.published_at ? new Date(auth.published_at).getFullYear() : '';
-            return (
-              <Link
-                key={auth.id}
-                to={`/authorities/${auth.slug}`}
-                className="md:col-start-2 group relative bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200 flex flex-col"
-              >
+            const cardContent = (
+              <>
                 {index === 0 && (
                   <span className="absolute -top-2.5 -right-2.5 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-action-red text-white shadow-sm">
                     NEW
@@ -185,8 +210,40 @@ export default function HomePage() {
                     Read &rarr;
                   </span>
                 </div>
+              </>
+            );
+
+            if (isLocked) {
+              return (
+                <div
+                  key={auth.id}
+                  onClick={() => setShowLockedModal(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === ' ') {
+                        e.preventDefault();
+                      }
+                      setShowLockedModal(true);
+                    }
+                  }}
+                  className="md:col-start-2 group relative bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200 flex flex-col cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                >
+                  {cardContent}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={auth.id}
+                to={`/authorities/${auth.slug}`}
+                className="md:col-start-2 group relative bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200 flex flex-col"
+              >
+                {cardContent}
               </Link>
-            )
+            );
           })
         )}
 
@@ -204,6 +261,12 @@ export default function HomePage() {
         </div>
 
       </div>
+
+      <AccessRestrictedModal
+        isOpen={showLockedModal}
+        onClose={() => setShowLockedModal(false)}
+      />
     </div>
   );
 }
+

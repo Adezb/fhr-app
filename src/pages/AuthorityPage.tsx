@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation, Navigate } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
 import ReaderView from '../components/reader/ReaderView';
+import { useIsLocked } from '../hooks/useLaunchGate';
 
 export default function AuthorityPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -11,12 +12,13 @@ export default function AuthorityPage() {
   const location = useLocation();
   const highlightQuery = searchParams.get('q') || undefined;
   
+  const isLocked = useIsLocked();
   const [authority, setAuthority] = useState<Authority | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadAuthority() {
-      if (!slug) return;
+      if (!slug || isLocked) return;
       
       setIsLoading(true);
       // Reset scroll position instantly to 0 as soon as navigation starts to clear previous page state
@@ -47,7 +49,11 @@ export default function AuthorityPage() {
     }
     
     loadAuthority();
-  }, [slug, navigate]);
+  }, [slug, navigate, searchParams, isLocked]);
+
+  if (isLocked) {
+    return <Navigate to="/launch" replace />;
+  }
 
   if (isLoading) {
     return (

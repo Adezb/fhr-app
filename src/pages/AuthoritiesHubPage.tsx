@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
+import { useIsLocked } from '../hooks/useLaunchGate';
+import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
 
 export default function AuthoritiesHubPage() {
   const [authorities, setAuthorities] = useState<Authority[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const isLocked = useIsLocked();
+  const [showLockedModal, setShowLockedModal] = useState(false);
 
   useEffect(() => {
     async function loadAuthorities() {
@@ -69,39 +73,75 @@ export default function AuthoritiesHubPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {authorities.map(auth => (
-            <Link
-              key={auth.id}
-              to={`/authorities/${auth.slug}`}
-              className="group flex flex-col bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200"
-            >
-              <h2 className="text-lg md:text-xl font-serif font-bold text-navy dark:text-text-heading-dark group-hover:text-gold dark:group-hover:text-gold-light transition-colors leading-snug">
-                {auth.title}
-              </h2>
+          {authorities.map(auth => {
+            const cardContent = (
+              <>
+                <h2 className="text-lg md:text-xl font-serif font-bold text-navy dark:text-text-heading-dark group-hover:text-gold dark:group-hover:text-gold-light transition-colors leading-snug">
+                  {auth.title}
+                </h2>
 
-              {auth.summary && (
-                <p className="mt-3 text-sm md:text-base text-text-body dark:text-text-body-dark line-clamp-3 leading-relaxed flex-1">
-                  {auth.summary}
-                </p>
-              )}
+                {auth.summary && (
+                  <p className="mt-3 text-sm md:text-base text-text-body dark:text-text-body-dark line-clamp-3 leading-relaxed flex-1">
+                    {auth.summary}
+                  </p>
+                )}
 
-              <div className="mt-6 flex items-center justify-between text-xs font-medium text-text-muted uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gold dark:text-gold-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {auth.published_at
-                    ? new Date(auth.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-                    : 'Published'}
-                </span>
-                <span className="text-gold dark:text-gold-light group-hover:translate-x-1 transition-transform">
-                  Read &rarr;
-                </span>
-              </div>
-            </Link>
-          ))}
+                <div className="mt-6 flex items-center justify-between text-xs font-medium text-text-muted uppercase tracking-wider">
+                  <span className="flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gold dark:text-gold-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {auth.published_at
+                      ? new Date(auth.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                      : 'Published'}
+                  </span>
+                  <span className="text-gold dark:text-gold-light group-hover:translate-x-1 transition-transform">
+                    Read &rarr;
+                  </span>
+                </div>
+              </>
+            );
+
+            if (isLocked) {
+              return (
+                <div
+                  key={auth.id}
+                  onClick={() => setShowLockedModal(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === ' ') {
+                        e.preventDefault();
+                      }
+                      setShowLockedModal(true);
+                    }
+                  }}
+                  className="group flex flex-col bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200 cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                >
+                  {cardContent}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={auth.id}
+                to={`/authorities/${auth.slug}`}
+                className="group flex flex-col bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200"
+              >
+                {cardContent}
+              </Link>
+            );
+          })}
         </div>
       )}
+
+      <AccessRestrictedModal
+        isOpen={showLockedModal}
+        onClose={() => setShowLockedModal(false)}
+      />
     </div>
   );
 }
+

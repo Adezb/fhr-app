@@ -14,9 +14,36 @@ interface BeforeInstallPromptEvent extends Event {
 const COOLDOWN_KEY = 'pwa-install-cooldown';
 const COOLDOWN_HOURS = 72;
 
+// Module-level singleton store for prompt event (immune to React unmounts & hydration delays)
+let globalDeferredPrompt: BeforeInstallPromptEvent | null = null;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e: Event) => {
+    // Prevent the mini-infobar from appearing automatically on mobile
+    e.preventDefault();
+    globalDeferredPrompt = e as BeforeInstallPromptEvent;
+    // Broadcast custom event so active hook instances update state instantly
+    window.dispatchEvent(new Event('pwa-deferred-prompt-changed'));
+  });
+
+  window.addEventListener('appinstalled', () => {
+    globalDeferredPrompt = null;
+    window.dispatchEvent(new Event('pwa-deferred-prompt-changed'));
+  });
+}
+
+function checkCooldownActive(): boolean {
+  if (typeof localStorage === 'undefined') return false;
+  const cooldownData = localStorage.getItem(COOLDOWN_KEY);
+  if (!cooldownData) return false;
+  const cooldownTime = parseInt(cooldownData, 10);
+  const now = new Date().getTime();
+  return now < cooldownTime + COOLDOWN_HOURS * 60 * 60 * 1000;
+}
+
 export function usePWAInstall() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showPrompt, setShowPrompt] = useState(false);
+  const [canInstallNative, setCanInstallNative] = useState<boolean>(() => globalDeferredPrompt !== null);
+  const [showPrompt, setShowPrompt] = useState<boolean>(() => globalDeferredPrompt !== null && !checkCooldownActive());
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isStandalone, setIsStandalone] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
@@ -29,26 +56,24 @@ export function usePWAInstall() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
     const mediaQuery = window.matchMedia('(display-mode: standalone)');
     const handleChange = (e: MediaQueryListEvent) => setIsStandalone(e.matches);
     mediaQuery.addEventListener('change', handleChange);
 
-    const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent the mini-infobar from appearing on mobile natively
-      e.preventDefault();
-      
-      const cooldownData = localStorage.getItem(COOLDOWN_KEY);
-      if (cooldownData) {
-        const cooldownTime = parseInt(cooldownData, 10);
-        const now = new Date().getTime();
-        // If we are still within the 72-hour cooldown period, do not show the prompt
-        if (now < cooldownTime + COOLDOWN_HOURS * 60 * 60 * 1000) {
-          return;
-        }
-      }
+    const updatePromptState = () => {
+      const hasPrompt = globalDeferredPrompt !== null;
+      setCanInstallNative(hasPrompt);
+      setShowPrompt(hasPrompt && !checkCooldownActive());
+    };
 
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowPrompt(true);
+    // Initialize state
+    updatePromptState();
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      globalDeferredPrompt = e as BeforeInstallPromptEvent;
+      updatePromptState();
     };
 
     const handleGlobalSuccess = () => {
@@ -57,23 +82,25 @@ export function usePWAInstall() {
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    // Listen for the global fallback event dispatched from App.tsx
+    window.addEventListener('pwa-deferred-prompt-changed', updatePromptState);
     window.addEventListener('pwa-success-install', handleGlobalSuccess);
 
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('pwa-deferred-prompt-changed', updatePromptState);
       window.removeEventListener('pwa-success-install', handleGlobalSuccess);
     };
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    
+    if (!globalDeferredPrompt) return;
+
+    const promptEvent = globalDeferredPrompt;
     // Show the native browser install prompt
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
+    promptEvent.prompt();
+    const { outcome } = await promptEvent.userChoice;
+
     if (outcome === 'accepted') {
       console.log('User accepted the PWA install prompt');
       if (isMobileOrTabletDevice()) {
@@ -81,10 +108,11 @@ export function usePWAInstall() {
       }
     } else {
       console.log('User dismissed the PWA install prompt');
-      handleDismiss(); // Trigger cooldown if they dismiss via the native prompt
+      handleDismiss(); // Trigger cooldown if they dismiss via native prompt
     }
-    
-    setDeferredPrompt(null);
+
+    globalDeferredPrompt = null;
+    setCanInstallNative(false);
     setShowPrompt(false);
   };
 
@@ -98,5 +126,13 @@ export function usePWAInstall() {
     setShowSuccessModal(false);
   };
 
-  return { showPrompt, showSuccessModal, isStandalone, handleInstall, handleDismiss, handleDismissSuccess };
+  return {
+    showPrompt,
+    showSuccessModal,
+    isStandalone,
+    canInstallNative,
+    handleInstall,
+    handleDismiss,
+    handleDismissSuccess,
+  };
 }

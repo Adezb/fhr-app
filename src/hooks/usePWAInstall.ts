@@ -59,7 +59,6 @@ export function usePWAInstall() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-<<<<<<< HEAD
     // Check for ?source=qr in search parameters
     const urlParams = new URLSearchParams(window.location.search);
     const isFromQR = urlParams.get('source') === 'qr';
@@ -75,42 +74,19 @@ export function usePWAInstall() {
       window.history.replaceState({}, '', newUrl);
     }
 
-=======
->>>>>>> 5196a03789154958969f97e0cd6ce84df4ae0897
     const mediaQuery = window.matchMedia('(display-mode: standalone)');
     const handleChange = (e: MediaQueryListEvent) => setIsStandalone(e.matches);
     mediaQuery.addEventListener('change', handleChange);
 
-<<<<<<< HEAD
-    const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent the mini-infobar from appearing on mobile natively
-      e.preventDefault();
-      
-      const evt = e as BeforeInstallPromptEvent;
-      setDeferredPrompt(evt);
-
-      // If user arrived via QR code, skip cooldown entirely (0 min cooldown for QR visits)
-      if (isFromQR) {
-        setShowPrompt(true);
-        return;
-      }
-
-      const cooldownData = localStorage.getItem(COOLDOWN_KEY);
-      if (cooldownData) {
-        const cooldownTime = parseInt(cooldownData, 10);
-        const now = new Date().getTime();
-        // If we are still within the 72-hour cooldown period, do not show prompt
-        if (now < cooldownTime + COOLDOWN_HOURS * 60 * 60 * 1000) {
-          return;
-        }
-      }
-
-      setShowPrompt(true);
-=======
     const updatePromptState = () => {
       const hasPrompt = globalDeferredPrompt !== null;
       setCanInstallNative(hasPrompt);
-      setShowPrompt(hasPrompt && !checkCooldownActive());
+      // If from QR scan, bypass 72-hour cooldown check entirely
+      if (isFromQR) {
+        setShowPrompt(hasPrompt);
+      } else {
+        setShowPrompt(hasPrompt && !checkCooldownActive());
+      }
     };
 
     // Initialize state
@@ -120,7 +96,6 @@ export function usePWAInstall() {
       e.preventDefault();
       globalDeferredPrompt = e as BeforeInstallPromptEvent;
       updatePromptState();
->>>>>>> 5196a03789154958969f97e0cd6ce84df4ae0897
     };
 
     const handleGlobalSuccess = () => {
@@ -142,22 +117,13 @@ export function usePWAInstall() {
   }, []);
 
   const handleInstall = async () => {
-<<<<<<< HEAD
-    if (!deferredPrompt) return;
-    
-    // Show native browser install prompt
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-=======
     if (!globalDeferredPrompt) return;
 
     const promptEvent = globalDeferredPrompt;
-    // Show the native browser install prompt
+    // Show native browser install prompt
     promptEvent.prompt();
     const { outcome } = await promptEvent.userChoice;
 
->>>>>>> 5196a03789154958969f97e0cd6ce84df4ae0897
     if (outcome === 'accepted') {
       console.log('User accepted the PWA install prompt');
       if (isMobileOrTabletDevice()) {
@@ -165,11 +131,7 @@ export function usePWAInstall() {
       }
     } else {
       console.log('User dismissed the PWA install prompt');
-<<<<<<< HEAD
       handleDismiss();
-=======
-      handleDismiss(); // Trigger cooldown if they dismiss via native prompt
->>>>>>> 5196a03789154958969f97e0cd6ce84df4ae0897
     }
 
     globalDeferredPrompt = null;
@@ -196,13 +158,10 @@ export function usePWAInstall() {
     showPrompt,
     showSuccessModal,
     isStandalone,
-<<<<<<< HEAD
     isQRSource,
     showQRInterstitial,
-    deferredPrompt,
-=======
     canInstallNative,
->>>>>>> 5196a03789154958969f97e0cd6ce84df4ae0897
+    deferredPrompt: globalDeferredPrompt,
     handleInstall,
     handleDismiss,
     handleDismissSuccess,

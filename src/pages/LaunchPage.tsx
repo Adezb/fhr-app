@@ -8,11 +8,11 @@ import { usePWAInstall } from '../hooks/usePWAInstall';
 
 export default function LaunchPage() {
   const { isLocked, timeRemaining } = useLaunchGate();
-  const { showPrompt, handleInstall, isStandalone } = usePWAInstall();
+  const { canInstallNative, handleInstall, isStandalone } = usePWAInstall();
   const [showGuideModal, setShowGuideModal] = useState(false);
 
   const handleInstallClick = () => {
-    if (showPrompt) {
+    if (canInstallNative) {
       handleInstall();
     } else {
       setShowGuideModal(true);

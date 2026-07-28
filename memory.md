@@ -38,23 +38,21 @@
 
 
 
-## Recent Architectural Feature: SEO Image, Mobile Header Responsive Layout, and PWA Install Logic
+## Recent Architectural Feature: PWA Native Install Prompt Architecture & Singleton Store Fix
 - **Status**: Completed & Production Build Verified
 
-### Components & Utilities Implemented/Updated
-1. `public/fhr-full-cover.png`: Compressed cover image from 921 KB (2441x1654) down to **106.37 KB** (1200x813 PNG). Guarantees WhatsApp link preview scrapers unfurl the Open Graph card without hitting WhatsApp's 300KB image payload limit.
-2. `src/components/common/SEO.tsx`: Updated `DEFAULT_IMAGE` to absolute `https://fhrnigeria.app/fhr-full-cover.png`. Enforces absolute URL conversion for relative paths and injects `og:image:type` (`image/png`), `og:image:width` (1200), and `og:image:height` (813).
-3. `index.html` & `scripts/prerender.js`: Updated static template fallback and pre-rendered static HTML routes (`dist/launch/index.html`, `dist/*/index.html`) to use absolute `https://fhrnigeria.app/fhr-full-cover.png`.
-4. `src/hooks/usePWAInstall.ts`: Refactored hook to track `isStandalone` state using `window.matchMedia('(display-mode: standalone)')` and `(navigator as any).standalone`. Returned `isStandalone` in hook return value.
-5. `src/components/pwa/InstallGuideModal.tsx`: New responsive modal explaining manual installation steps tailored to user environment (iOS Safari share sheet, WhatsApp/Instagram in-app WebViews, and unsupported Android/desktop browser menus).
-6. `src/pages/LaunchPage.tsx`:
-   - Updated header container with `gap-3 sm:gap-4`, `min-w-0`, responsive typography (`text-sm sm:text-base md:text-lg`), and `shrink-0 whitespace-nowrap` on "Explore Home &rarr;" link to prevent mobile squeezing and line wraps.
-   - Refactored PWA action button logic: Displays "Open App in Browser &rarr;" strictly when in standalone mode (`isStandalone === true`). When in browser/WebView (`isStandalone === false`), explicitly displays "Install App Now", triggering native prompt if available or `InstallGuideModal` when native prompt cannot be triggered.
+### Components & Hooks Implemented/Updated
+1. `src/hooks/usePWAInstall.ts`:
+   - Established module-level singleton `globalDeferredPrompt` store listening to `window.addEventListener('beforeinstallprompt', ...)`. Captures `BeforeInstallPromptEvent` instantly upon script load, immune to React lifecycle unmounts or hydration timing delays.
+   - Decoupled `localStorage` cooldown (`pwa-install-cooldown`) from event capture. Event handle `globalDeferredPrompt` is now ALWAYS preserved in memory when fired by Chromium. Cooldown ONLY affects `showPrompt` for automatic popup banners.
+   - Added `canInstallNative` boolean state (`globalDeferredPrompt !== null`) to hook return value.
+2. `src/pages/LaunchPage.tsx`:
+   - Refactored `handleInstallClick` to check `if (canInstallNative)`. When `canInstallNative` is true, calling `handleInstall()` immediately triggers Chromium's native OS install sheet (`globalDeferredPrompt.prompt()`).
+   - If `canInstallNative` is false (iOS Safari, in-app WebViews like WhatsApp/Instagram), `handleInstallClick` opens the manual fallback modal (`InstallGuideModal`).
 
 ## Key Technical Decisions
-- **Absolute Social Image URLs**: Open Graph specification requires absolute HTTP/HTTPS URLs for scrapers (e.g. WhatsApp, Twitter, Facebook). Relative image paths cause scraping failures on external webviews.
-- **Standalone Display Mode Check**: Rather than relying on `beforeinstallprompt` presence to determine installation status, the app explicitly queries `(display-mode: standalone)` media query.
-- **Responsive Header Text Truncation**: Used `min-w-0` on flex children and `shrink-0` on action links to ensure right-aligned CTA elements are never pushed off-screen on small viewports (<360px).
+- **Module-Level Event Caching**: PWA `beforeinstallprompt` event is fired only once per page load by Chromium. Capturing it in a module-level variable guarantees event handle preservation across component mounts, page navigation, and re-renders.
+- **Decoupled User Intent**: Auto-popup banner suppression (cooldowns) must never destroy explicit user action capabilities. Separating auto-banner state (`showPrompt`) from native prompt availability (`canInstallNative`) ensures user-initiated button clicks always invoke native prompt APIs when supported.
 
 
 ## Recent Architectural Feature: QR Code Installation Interstitial Flow
@@ -86,7 +84,11 @@
 - **Root-Level Interstitial Mounting**: Mounted outside the route tree so it displays regardless of whether the target route is inside or outside `AppShell`.
 
 ## Next Steps / Backlog
+<<<<<<< HEAD
 - Production deployment on Vercel and live physical device QR scan testing (Android Chrome, iOS Safari, WhatsApp in-app browser).
 
+=======
+- Production deployment on Vercel and final live link sharing & PWA install tests on Android Chrome, iOS Safari, and WhatsApp WebViews.
+>>>>>>> 5196a03789154958969f97e0cd6ce84df4ae0897
 
 

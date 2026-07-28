@@ -23,7 +23,7 @@ export default function LaunchPage() {
     <>
       <SEO
         title="Official App Launch & PWA Download"
-        description="Official book app launch for Fundamental Rights Practice Guide by CEK TOP VENTURES LTD. Launching Monday, August 3rd, 2026. On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter."
+        description="Install the official companion app. To be launched during the lecture presentation at NBA Ikorodu Branch meeting on Monday, August 3rd, 2026 at 3:00 PM WAT."
         image="https://fhrnigeria.app/fhr-full-cover.png"
         url="/launch"
       />
@@ -61,7 +61,7 @@ export default function LaunchPage() {
               Fundamental Rights Practice Guide
             </h1>
             <p className="text-base sm:text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              A digital legal companion app for all. To be launched on Monday, August 3rd, 2026 at 3:00 PM WAT. On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
+              A digital legal companion app for all. To be launched during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026 at 3:00 PM WAT.</strong> On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
             </p>
           </div>
 

@@ -495,7 +495,22 @@ All future components must match these established patterns for consistency.
 - **Interception Strategy**:
   - Listing & hub pages (`/`, `/book`, `/authorities`) render identical UI cards, but wrap interactive cards in `div[role="button"][tabIndex=0]` with `cursor-pointer` when `isLocked === true`, triggering `AccessRestrictedModal` instead of navigating.
   - Search trigger in `TopNavbar` intercepted at `AppShell` level: `handleSearchClick` triggers `AccessRestrictedModal` when `isLocked === true` instead of opening `SearchOverlay`.
-  - Direct URL access to `/book/:slug` and `/authorities/:slug` while locked automatically redirects to `/launch` via `<Navigate to="/launch" replace />`.
+
+---
+
+## QRInstallInterstitial (Event QR Code Auto-Prompt Interstitial)
+- **File**: `src/components/pwa/QRInstallInterstitial.tsx`
+- **Date**: 2026-07-28
+- **Trigger Signal**: `?source=qr` query parameter on any route
+- **Overlay**: `fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fade-in`
+- **Card**: `bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-md mx-auto p-6 transition-all transform animate-scale-up text-slate-800 dark:text-slate-200 relative`
+- **Badge**: `inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/10 text-gold text-xs font-semibold uppercase tracking-wider border border-gold/20` with `w-2 h-2 rounded-full bg-gold animate-ping`
+- **Icon Container**: `mx-auto flex items-center justify-center h-14 w-14 rounded-2xl bg-navy text-gold-light mb-4 shadow-lg`
+- **Text Colors**: Heading `text-navy dark:text-gold-light`, Body `text-slate-600 dark:text-slate-300`
+- **Steps Box**: `bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 mb-5 space-y-3`
+- **Primary CTA Button**: `w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl shadow-lg font-bold text-base text-navy bg-gold hover:bg-gold-light focus:outline-none focus:ring-2 focus:ring-navy transition-all cursor-pointer transform hover:-translate-y-0.5`
+- **Dismiss Link**: `text-xs sm:text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors py-2 cursor-pointer border-none bg-transparent`
+
 
 
 

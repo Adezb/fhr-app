@@ -17,6 +17,7 @@ import AdminMobileGuard from './components/admin/AdminMobileGuard';
 import SuperAdminRoute from './components/admin/SuperAdminRoute';
 import { isMobileOrTabletDevice } from './utils/device';
 import ReloadPrompt from './components/pwa/ReloadPrompt';
+import QRInstallInterstitial from './components/pwa/QRInstallInterstitial';
 import { LaunchGateProvider } from './hooks/useLaunchGate';
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
   return (
     <LaunchGateProvider>
       <BrowserRouter>
+        <QRInstallInterstitial />
         <Routes>
           {/* Launch Promo Page — standalone, no AppShell chrome */}
           <Route path="/launch" element={<LaunchPage />} />

@@ -18,6 +18,8 @@ export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isQRSource, setIsQRSource] = useState(false);
+  const [showQRInterstitial, setShowQRInterstitial] = useState(false);
   const [isStandalone, setIsStandalone] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return (
@@ -29,6 +31,22 @@ export function usePWAInstall() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    // Check for ?source=qr in search parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const isFromQR = urlParams.get('source') === 'qr';
+
+    if (isFromQR) {
+      setIsQRSource(true);
+      setShowQRInterstitial(true);
+
+      // Seamlessly strip query parameters from address bar to keep navigation trails clean
+      urlParams.delete('source');
+      const newSearch = urlParams.toString();
+      const newUrl = window.location.pathname + (newSearch ? `?${newSearch}` : '') + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+
     const mediaQuery = window.matchMedia('(display-mode: standalone)');
     const handleChange = (e: MediaQueryListEvent) => setIsStandalone(e.matches);
     mediaQuery.addEventListener('change', handleChange);
@@ -37,22 +55,31 @@ export function usePWAInstall() {
       // Prevent the mini-infobar from appearing on mobile natively
       e.preventDefault();
       
+      const evt = e as BeforeInstallPromptEvent;
+      setDeferredPrompt(evt);
+
+      // If user arrived via QR code, skip cooldown entirely (0 min cooldown for QR visits)
+      if (isFromQR) {
+        setShowPrompt(true);
+        return;
+      }
+
       const cooldownData = localStorage.getItem(COOLDOWN_KEY);
       if (cooldownData) {
         const cooldownTime = parseInt(cooldownData, 10);
         const now = new Date().getTime();
-        // If we are still within the 72-hour cooldown period, do not show the prompt
+        // If we are still within the 72-hour cooldown period, do not show prompt
         if (now < cooldownTime + COOLDOWN_HOURS * 60 * 60 * 1000) {
           return;
         }
       }
 
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowPrompt(true);
     };
 
     const handleGlobalSuccess = () => {
       setShowPrompt(false);
+      setShowQRInterstitial(false);
       setShowSuccessModal(true);
     };
 
@@ -70,7 +97,7 @@ export function usePWAInstall() {
   const handleInstall = async () => {
     if (!deferredPrompt) return;
     
-    // Show the native browser install prompt
+    // Show native browser install prompt
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     
@@ -81,22 +108,37 @@ export function usePWAInstall() {
       }
     } else {
       console.log('User dismissed the PWA install prompt');
-      handleDismiss(); // Trigger cooldown if they dismiss via the native prompt
+      handleDismiss();
     }
     
     setDeferredPrompt(null);
     setShowPrompt(false);
+    setShowQRInterstitial(false);
   };
 
   const handleDismiss = () => {
-    const now = new Date().getTime();
-    localStorage.setItem(COOLDOWN_KEY, now.toString());
+    // Only apply 72h cooldown if user did NOT arrive via QR code scan (QR scan has 0 min cooldown)
+    if (!isQRSource) {
+      const now = new Date().getTime();
+      localStorage.setItem(COOLDOWN_KEY, now.toString());
+    }
     setShowPrompt(false);
+    setShowQRInterstitial(false);
   };
 
   const handleDismissSuccess = () => {
     setShowSuccessModal(false);
   };
 
-  return { showPrompt, showSuccessModal, isStandalone, handleInstall, handleDismiss, handleDismissSuccess };
+  return {
+    showPrompt,
+    showSuccessModal,
+    isStandalone,
+    isQRSource,
+    showQRInterstitial,
+    deferredPrompt,
+    handleInstall,
+    handleDismiss,
+    handleDismissSuccess,
+  };
 }

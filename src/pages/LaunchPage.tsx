@@ -161,7 +161,7 @@ export default function LaunchPage() {
             <div className="flex flex-col items-center shrink-0">
               <div className="bg-white p-3 rounded-xl shadow-md border border-slate-200">
                 <QRCode
-                  value="https://fhrnigeria.app"
+                  value="https://fhrnigeria.app/launch?source=qr"
                   size={140}
                   bgColor="#FFFFFF"
                   fgColor="#1A2B4C"

@@ -56,7 +56,37 @@
 - **Standalone Display Mode Check**: Rather than relying on `beforeinstallprompt` presence to determine installation status, the app explicitly queries `(display-mode: standalone)` media query.
 - **Responsive Header Text Truncation**: Used `min-w-0` on flex children and `shrink-0` on action links to ensure right-aligned CTA elements are never pushed off-screen on small viewports (<360px).
 
+
+## Recent Architectural Feature: QR Code Installation Interstitial Flow
+- **Status**: Implemented & Production Build Verified
+- **Issue Solved**: Mobilized QR code scanners were not receiving a proactive install prompt due to missing URL signal, route un-mounting, 72-hour cooldown lockouts, and lack of iOS auto-display mechanisms.
+
+### Components & Utilities Implemented/Updated
+1. `src/pages/LaunchPage.tsx`: Updated `QRCode` value to point explicitly to `https://fhrnigeria.app/launch?source=qr`.
+2. `src/hooks/usePWAInstall.ts`:
+   - Detects `?source=qr` in `window.location.search`.
+   - Seamlessly strips `source` from address bar using `window.history.replaceState` without triggering page reload.
+   - Bypasses the 72-hour `localStorage` cooldown entirely when `source=qr` is present (0 min event cooldown).
+   - Dismissing the QR interstitial does NOT set a 72-hour cooldown in `localStorage`.
+   - Exports `isQRSource` and `showQRInterstitial` flags.
+3. `src/components/pwa/QRInstallInterstitial.tsx`:
+   - New root-level interstitial modal auto-displayed when `?source=qr` is detected.
+   - Tailored per user environment:
+     - **Android**: Displays "Install App Now" CTA button triggering native `deferredPrompt.prompt()`.
+     - **iOS**: Displays Safari Share → Add to Home Screen visual step-by-step instructions immediately.
+     - **In-App Browser**: Displays "Open in Browser" (Chrome/Safari) step-by-step instructions.
+   - Returns `null` if user is already running app in `isStandalone` display mode.
+   - Features "Continue reading in browser" secondary dismiss option.
+4. `src/App.tsx`: Mounted `<QRInstallInterstitial />` at root level inside `<BrowserRouter>` (before `<Routes>`), ensuring auto-prompt works across any landing route (`/launch`, `/`, etc.).
+
+## Key Technical Decisions
+- **URL Parameter Signal (`?source=qr`)**: Differentiates event QR scan traffic from organic site visits without altering clean path routing.
+- **Address Bar Cleanup (`replaceState`)**: Immediately strips query parameters after hook initialization so copied/shared links remain clean.
+- **Zero-Cooldown Event Re-Scans**: Dismissing a QR scan does not lock out subsequent QR scans; re-scanning the QR code always re-triggers the interstitial.
+- **Root-Level Interstitial Mounting**: Mounted outside the route tree so it displays regardless of whether the target route is inside or outside `AppShell`.
+
 ## Next Steps / Backlog
-- Production deployment on Vercel and final live link sharing tests on WhatsApp, iMessage, and Twitter.
+- Production deployment on Vercel and live physical device QR scan testing (Android Chrome, iOS Safari, WhatsApp in-app browser).
+
 
 

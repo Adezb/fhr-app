@@ -52,7 +52,7 @@ export default function LaunchPage() {
           {/* Conference Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy/10 dark:bg-gold/10 border border-navy/20 dark:border-gold/30 text-navy dark:text-gold-light text-xs font-semibold uppercase tracking-wider mb-6">
             <span className="w-2 h-2 rounded-full bg-gold animate-ping" />
-            Official Book App Launch
+            Official Web App Launch
           </div>
 
           {/* Hero Section */}
@@ -61,7 +61,7 @@ export default function LaunchPage() {
               Fundamental Rights Practice Guide
             </h1>
             <p className="text-base sm:text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              A digital legal companion app for all. To be launched during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026 at 3:00 PM WAT.</strong> On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
+              A digital legal companion app for all. To be launched during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026.</strong> On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
             </p>
           </div>
 
@@ -104,7 +104,7 @@ export default function LaunchPage() {
                 ))}
               </div>
               <p className="text-xs text-center text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Launching Monday, August 3rd, 2026 at 3:00 PM WAT
+                Launching Monday, August 3rd, 2026
               </p>
             </div>
           ) : (
@@ -134,7 +134,7 @@ export default function LaunchPage() {
                 Get the App on Your Device
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
-                Install as a Progressive Web App (PWA) for 100% offline access—no app store download required.
+                Install NOW for 100% offline access—no app store download required.
               </p>
 
               {isStandalone ? (
@@ -169,7 +169,7 @@ export default function LaunchPage() {
                 />
               </div>
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-2 text-center max-w-[160px]">
-                Scan with phone camera to open on mobile
+                Scan QR Code to install on your device 📲 NOW!
               </span>
             </div>
 

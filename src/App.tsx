@@ -19,6 +19,7 @@ import { isMobileOrTabletDevice } from './utils/device';
 import ReloadPrompt from './components/pwa/ReloadPrompt';
 import QRInstallInterstitial from './components/pwa/QRInstallInterstitial';
 import { LaunchGateProvider } from './hooks/useLaunchGate';
+import PageTracker from './components/analytics/PageTracker';
 
 function App() {
   useEffect(() => {
@@ -44,6 +45,7 @@ function App() {
   return (
     <LaunchGateProvider>
       <BrowserRouter>
+        <PageTracker />
         <QRInstallInterstitial />
         <Routes>
           {/* Launch Promo Page — standalone, no AppShell chrome */}

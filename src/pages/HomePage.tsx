@@ -7,6 +7,8 @@ import { useReadingProgress } from '../hooks/useReadingProgress';
 import { LEGAL_MAXIMS } from '../lib/maxims';
 import { useIsLocked } from '../hooks/useLaunchGate';
 import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
+import { showPushPrompt } from '../lib/onesignal';
+import { trackEvent } from '../lib/analytics';
 
 
 // 1. Dynamic Greeting
@@ -58,6 +60,17 @@ export default function HomePage() {
 
     loadRecentAuthorities();
   }, []);
+
+  // OneSignal Push Notification Opt-In Trigger (Option A: 8-second delay post-launch)
+  useEffect(() => {
+    if (isLocked) return;
+
+    const timer = setTimeout(() => {
+      showPushPrompt();
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, [isLocked]);
 
   const continueReadingContent = (
     <>
@@ -139,12 +152,16 @@ export default function HomePage() {
         {/* Continue Reading Card */}
         {isLocked ? (
           <div
-            onClick={() => setShowLockedModal(true)}
+            onClick={() => {
+              trackEvent('cta_reading_blocked_prelaunch');
+              setShowLockedModal(true);
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 if (e.key === ' ') {
                   e.preventDefault();
                 }
+                trackEvent('cta_reading_blocked_prelaunch');
                 setShowLockedModal(true);
               }
             }}
@@ -157,6 +174,13 @@ export default function HomePage() {
         ) : (
           <Link
             to={progress ? `/book/${progress.chapterSlug}` : "/book"}
+            onClick={() => {
+              if (progress) {
+                trackEvent('cta_continue_reading', { chapter: progress.chapterSlug, progress_pct: Math.round(progress.scrollPercentage) });
+              } else {
+                trackEvent('cta_start_reading');
+              }
+            }}
             className="md:row-span-3 flex flex-col justify-between bg-navy dark:bg-midnight-light rounded-xl p-4 md:p-6 shadow-lg border border-white/10 group hover:shadow-xl transition-all duration-300"
           >
             {continueReadingContent}
@@ -170,6 +194,7 @@ export default function HomePage() {
           </h2>
           <Link
             to="/authorities"
+            onClick={() => trackEvent('navigate_authorities_hub')}
             className="text-sm font-medium text-gold hover:text-gold-light transition-colors flex items-center gap-1 hover:translate-x-0.5 duration-200"
           >
             View All &rarr;

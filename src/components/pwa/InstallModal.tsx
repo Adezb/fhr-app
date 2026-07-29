@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
 import InstallSuccessModal from './InstallSuccessModal';
+import { trackEvent } from '../../lib/analytics';
 
 export default function InstallModal() {
   const { showPrompt, showSuccessModal, handleInstall, handleDismiss, handleDismissSuccess } = usePWAInstall();
@@ -12,6 +13,12 @@ export default function InstallModal() {
       (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
     setIsIOS(checkIOS);
   }, []);
+
+  useEffect(() => {
+    if (showPrompt) {
+      trackEvent('pwa_banner_impression');
+    }
+  }, [showPrompt]);
 
   if (showSuccessModal) {
     return <InstallSuccessModal onDismiss={handleDismissSuccess} />;

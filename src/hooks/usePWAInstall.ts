@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { isMobileOrTabletDevice } from '../utils/device';
+import { trackEvent } from '../lib/analytics';
 
 // Define the BeforeInstallPromptEvent interface as it's not standard in TypeScript DOM lib yet
 interface BeforeInstallPromptEvent extends Event {
@@ -99,6 +100,7 @@ export function usePWAInstall() {
     };
 
     const handleGlobalSuccess = () => {
+      trackEvent('pwa_install_complete');
       setShowPrompt(false);
       setShowQRInterstitial(false);
       setShowSuccessModal(true);
@@ -125,11 +127,13 @@ export function usePWAInstall() {
     const { outcome } = await promptEvent.userChoice;
 
     if (outcome === 'accepted') {
+      trackEvent('pwa_install_accepted', { method: 'native_prompt' });
       console.log('User accepted the PWA install prompt');
       if (isMobileOrTabletDevice()) {
         setShowSuccessModal(true);
       }
     } else {
+      trackEvent('pwa_install_dismissed', { method: 'native_prompt' });
       console.log('User dismissed the PWA install prompt');
       handleDismiss();
     }
@@ -141,6 +145,7 @@ export function usePWAInstall() {
   };
 
   const handleDismiss = () => {
+    trackEvent('pwa_banner_dismissed', { source: isQRSource ? 'qr' : 'organic' });
     // Only apply 72h cooldown if user did NOT arrive via QR code scan (QR scan has 0 min cooldown)
     if (!isQRSource) {
       const now = new Date().getTime();

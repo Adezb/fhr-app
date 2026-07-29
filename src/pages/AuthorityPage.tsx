@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation, Navigate } from 'react-router-dom';
 import { getDB } from '../lib/db';
 import type { Authority } from '../types';
 import SEO from '../components/common/SEO';
 import ReaderView from '../components/reader/ReaderView';
 import { useIsLocked } from '../hooks/useLaunchGate';
+import { trackEvent } from '../lib/analytics';
 
 function getPlainTextExcerpt(htmlStr: string, maxLength: number = 155): string {
   const text = htmlStr.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -22,6 +23,7 @@ export default function AuthorityPage() {
   const isLocked = useIsLocked();
   const [authority, setAuthority] = useState<Authority | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const trackedSlugs = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     async function loadAuthority() {
@@ -43,6 +45,10 @@ export default function AuthorityPage() {
         }
         
         setAuthority(current);
+        if (!trackedSlugs.current.has(current.slug)) {
+          trackedSlugs.current.add(current.slug);
+          trackEvent('authority_content_loaded', { slug: current.slug, title: current.title });
+        }
         
         // Auto scroll to top when authority loads, unless highlighting a search result
         if (!searchParams.get('q')) {

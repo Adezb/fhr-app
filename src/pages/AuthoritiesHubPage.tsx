@@ -5,6 +5,7 @@ import type { Authority } from '../types';
 import SEO from '../components/common/SEO';
 import { useIsLocked } from '../hooks/useLaunchGate';
 import AccessRestrictedModal from '../components/launch/AccessRestrictedModal';
+import { trackEvent } from '../lib/analytics';
 
 export default function AuthoritiesHubPage() {
   const [authorities, setAuthorities] = useState<Authority[]>([]);
@@ -136,6 +137,7 @@ export default function AuthoritiesHubPage() {
               <Link
                 key={auth.id}
                 to={`/authorities/${auth.slug}`}
+                onClick={() => trackEvent('authority_view', { slug: auth.slug, title: auth.title })}
                 className="group flex flex-col bg-white dark:bg-midnight-light border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gold-light dark:hover:border-gold transition-all duration-200"
               >
                 {cardContent}

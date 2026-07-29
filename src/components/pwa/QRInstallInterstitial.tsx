@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
 import InstallSuccessModal from './InstallSuccessModal';
+import { trackEvent } from '../../lib/analytics';
 
 export default function QRInstallInterstitial() {
   const {
@@ -30,6 +31,12 @@ export default function QRInstallInterstitial() {
       /WhatsApp|Instagram|FB_IAB|FBAV|Telegram|Line|MicroMessenger|Twitter/i.test(ua);
     setIsInAppBrowser(checkInApp);
   }, []);
+
+  useEffect(() => {
+    if (!isStandalone && showQRInterstitial) {
+      trackEvent('pwa_qr_interstitial_impression');
+    }
+  }, [isStandalone, showQRInterstitial]);
 
   if (showSuccessModal) {
     return <InstallSuccessModal onDismiss={handleDismissSuccess} />;

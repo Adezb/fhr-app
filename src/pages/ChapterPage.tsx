@@ -8,6 +8,7 @@ import ReaderBottomNav from '../components/reader/ReaderBottomNav';
 import MobileChapterNav from '../components/book/MobileChapterNav';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useIsLocked } from '../hooks/useLaunchGate';
+import { trackEvent } from '../lib/analytics';
 
 function getPlainTextExcerpt(htmlStr: string, maxLength: number = 155): string {
   const text = htmlStr.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -114,9 +115,16 @@ export default function ChapterPage() {
     loadChapter();
   }, [slug, navigate, searchParams, isLocked]);
 
+  const reportedMilestones = useRef<Set<number>>(new Set());
+
+  // Reset milestone tracker on chapter slug change
+  useEffect(() => {
+    reportedMilestones.current.clear();
+  }, [slug]);
+
   // Track reading progress
   useEffect(() => {
-    if (!chapter || !slug || isLocked) return;
+    if (!chapter || !slug || isLocked || chapter.slug !== slug) return;
 
     let timeoutId: number;
 
@@ -141,6 +149,19 @@ export default function ChapterPage() {
         } else {
           percentage = 100;
         }
+
+        // Track reading milestones (25%, 50%, 75%, 100%)
+        const thresholds = [25, 50, 75, 100];
+        thresholds.forEach((m) => {
+          if (percentage >= m && !reportedMilestones.current.has(m)) {
+            reportedMilestones.current.add(m);
+            trackEvent('reading_progress_milestone', {
+              chapter: slug,
+              title: chapter.title,
+              milestone: m,
+            });
+          }
+        });
         
         saveProgress({
           chapterSlug: slug,

@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import SEO from '../components/common/SEO';
 import InstallGuideModal from '../components/pwa/InstallGuideModal';
 import { useLaunchGate } from '../hooks/useLaunchGate';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { showPushPrompt } from '../lib/onesignal';
+import { trackEvent } from '../lib/analytics';
 
 export default function LaunchPage() {
   const { isLocked, timeRemaining } = useLaunchGate();
@@ -12,12 +14,30 @@ export default function LaunchPage() {
   const [showGuideModal, setShowGuideModal] = useState(false);
 
   const handleInstallClick = () => {
+    trackEvent('pwa_launch_page_install_click');
     if (canInstallNative) {
       handleInstall();
     } else {
       setShowGuideModal(true);
     }
   };
+
+  useEffect(() => {
+    if (isLocked) {
+      trackEvent('launch_countdown_view');
+    }
+  }, [isLocked]);
+
+  // OneSignal Push Notification Opt-In Trigger (Option B: 5-second delay post-countdown unlock)
+  useEffect(() => {
+    if (isLocked) return;
+
+    const timer = setTimeout(() => {
+      showPushPrompt();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [isLocked]);
 
   return (
     <>
@@ -118,6 +138,7 @@ export default function LaunchPage() {
               </p>
               <Link
                 to="/"
+                onClick={() => trackEvent('launch_enter_app')}
                 className="inline-flex justify-center items-center py-3 px-6 rounded-md shadow-md text-base font-bold text-navy bg-gold hover:bg-gold-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-colors w-full"
               >
                 Enter App &rarr;

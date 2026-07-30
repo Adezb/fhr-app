@@ -18,6 +18,17 @@ export default function ReloadPrompt() {
 
   const handleReload = () => {
     updateServiceWorker(true);
+    
+    // Bulletproof fallback: manually find the waiting worker and send SKIP_WAITING
+    // This bypasses Workbox-window in case OneSignal interfered with its state.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then((reg) => {
+        if (reg && reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+      });
+    }
+
     // Defensive fallback: if the controlling event doesn't trigger a
     // reload within 2 seconds, force-reload the page explicitly.
     reloadTimer.current = setTimeout(() => {

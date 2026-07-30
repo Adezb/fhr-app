@@ -55,6 +55,7 @@ export default defineConfig({
        * Precache manifest injection parameters for src/sw.ts
        */
       injectManifest: {
+        rollupFormat: 'iife',
         globPatterns: ['**/*.{js,css,html,ico,svg,woff2,png,jpg,jpeg,webp}'],
         globIgnores: ['**/sitemap.xml', '**/robots.txt'],
         maximumFileSizeToCacheInBytes: 3000000,

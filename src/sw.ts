@@ -8,6 +8,11 @@ declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: Array<{ url: string; revision: string | null }>;
 };
 
+// Claim clients immediately on activation so the "controlling" event fires in workbox-window
+self.addEventListener('activate', (event: ExtendableEvent) => {
+  event.waitUntil(self.clients.claim());
+});
+
 // Handle update skipWaiting message from ReloadPrompt during initial evaluation
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {

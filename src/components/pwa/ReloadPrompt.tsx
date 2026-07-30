@@ -1,6 +1,9 @@
+import { useRef } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export default function ReloadPrompt() {
+  const reloadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -12,6 +15,15 @@ export default function ReloadPrompt() {
       console.error('SW registration error: ' + error);
     },
   });
+
+  const handleReload = () => {
+    updateServiceWorker(true);
+    // Defensive fallback: if the controlling event doesn't trigger a
+    // reload within 2 seconds, force-reload the page explicitly.
+    reloadTimer.current = setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  };
 
   if (!needRefresh) return null;
 
@@ -25,7 +37,7 @@ export default function ReloadPrompt() {
       </div>
       <div className="flex gap-2 shrink-0">
         <button
-          onClick={() => updateServiceWorker(true)}
+          onClick={handleReload}
           className="px-4 py-2 bg-gold hover:bg-gold-light text-navy font-bold rounded-lg transition-colors text-sm shadow-sm cursor-pointer"
         >
           Reload

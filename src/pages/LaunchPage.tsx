@@ -72,7 +72,7 @@ export default function LaunchPage() {
           {/* Conference Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy/10 dark:bg-gold/10 border border-navy/20 dark:border-gold/30 text-navy dark:text-gold-light text-xs font-semibold uppercase tracking-wider mb-6">
             <span className="w-2 h-2 rounded-full bg-gold animate-ping" />
-            Official Web App Launch
+            Official Web App Introduction
           </div>
 
           {/* Hero Section */}

@@ -29,7 +29,7 @@ export default function AccessRestrictedModal({ isOpen, onClose }: AccessRestric
             Access Restricted
           </h3>
           <p className="text-sm text-text-body dark:text-text-body-dark leading-relaxed mb-6">
-            The full text of the Fundamental Rights Practice Guide and Legal Authorities will be unlocked during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026.</strong> being its official launch date.
+            The full text of the Fundamental Rights Practice Guide and Legal Authorities will be unlocked during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026.</strong> when it goes LIVE.
           </p>
         </div>
 

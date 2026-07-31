@@ -42,8 +42,8 @@ export default function LaunchPage() {
   return (
     <>
       <SEO
-        title="Official App Launch & PWA Download"
-        description="Install the official companion app. To be launched during the lecture presentation at NBA Ikorodu Branch meeting on Monday, August 3rd, 2026 at 3:00 PM WAT."
+        title="Official App Installation/Download Page - FHR Practice Guide"
+        description="Install the official companion app. To go LIVE during the lecture presentation at NBA Ikorodu Branch meeting on Monday, August 3rd, 2026 at 3:00 PM WAT."
         image="https://fhrnigeria.app/fhr-full-cover.png"
         url="/launch"
       />
@@ -81,7 +81,7 @@ export default function LaunchPage() {
               Fundamental Rights Practice Guide
             </h1>
             <p className="text-base sm:text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              A digital legal companion app for all. To be launched during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026.</strong> On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
+              A digital legal companion app for all. To go LIVE during the lecture presentation at <strong>NBA Ikorodu Branch meeting on Monday, August 3rd, 2026.</strong> On-the-go offline access to Chapter IV of the 1999 Constitution, FREP Rules 2009, and the African Charter.
             </p>
           </div>
 
@@ -101,7 +101,7 @@ export default function LaunchPage() {
           {isLocked ? (
             <div className="w-full max-w-xl mb-12">
               <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center mb-4">
-                Official Launch Countdown
+                Official Go LIVE Countdown
               </h2>
               <div className="grid grid-cols-4 gap-2 sm:gap-4 text-center">
                 {[
@@ -124,7 +124,7 @@ export default function LaunchPage() {
                 ))}
               </div>
               <p className="text-xs text-center text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Launching Monday, August 3rd, 2026
+                Going LIVE on Monday, August 3rd, 2026
               </p>
             </div>
           ) : (

@@ -139,8 +139,8 @@ async function main() {
   const routesToRender = [
     {
       path: '/launch',
-      title: 'Official App Launch & PWA Download | Fundamental Rights Practice Guide',
-      description: 'Install the official companion app. To be launched during the lecture presentation at NBA Ikorodu Branch meeting on Monday, August 3rd, 2026 at 3:00 PM WAT.',
+      title: 'Official App Installation/Download Page | Fundamental Rights Practice Guide',
+      description: 'Install the official companion app. To go LIVE during the lecture presentation at NBA Ikorodu Branch meeting on Monday, August 3rd, 2026.',
       image: 'https://fhrnigeria.app/fhr-full-cover.png',
       url: '/launch',
     },
